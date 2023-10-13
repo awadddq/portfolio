@@ -1656,7 +1656,7 @@ Version       : 1.1
   }
 
   .client-wrp-brand {
-      width: 30%;
+      width: 50%;
       margin: 0 auto;
   }
 
@@ -2306,7 +2306,7 @@ Version       : 1.1
       }
 
       .client-wrp-brand {
-          width: 50%;
+          width: 55%;
       }
   }
 
