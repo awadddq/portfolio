@@ -1,7 +1,7 @@
   /*
 * ----------------------------------------------------------------------------------------
-Author        : Rama Hardian
-Template Name : mayaclay - personal html portfolio
+Author        : Awad Alqarni
+Template Name : awadalqarni - personal html portfolio
 Version       : 1.1
 * ----------------------------------------------------------------------------------------
 */
