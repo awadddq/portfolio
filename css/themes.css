@@ -457,7 +457,7 @@ Version       : 1.1
   }
 
   .clayhero-img {
-      filter: brightness(0.5);
+      filter: brightness(1.3);
       width: 50%;
       height: 100vh;
       position: absolute;
@@ -1902,7 +1902,7 @@ Version       : 1.1
 
       .clayhero-img {
           width: 100%;
-          filter: brightness(0.5);
+          filter: brightness(1.3);
       }
 
       .clayhero-img img {
