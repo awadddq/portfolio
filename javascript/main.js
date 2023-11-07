@@ -66,6 +66,8 @@ $(function() {
             $(".mini-hero").css("background", "url(" + src + ") no-repeat");
         });
         royhero.trigger('refresh.owl.carousel');
+
+
     }
 // OwlCarousel brand init
 var carouselclient = function(event) {

@@ -2381,3 +2381,83 @@ Version       : 1.1
 
 
   @media (max-width: 480px) {}
+
+  /* ----------------------------------------------------------------
+    [ 08 Start Works ]
+-----------------------------------------------------------------*/
+.work_filter ul{
+	padding: 0;
+	list-style: none;
+	margin-bottom: 30px;
+}
+.work_filter ul li{
+    font-weight: 500;
+    text-transform: capitalize;
+    display: inline-block;
+    cursor: pointer;
+    font-size: 14px;
+	line-height: 15px;
+	padding: 10px 20px;
+	background: rgba(174, 157, 120, 0.10);
+	border-radius: 20px;
+	color: #fff;
+    letter-spacing: 0.5px;
+    margin: 0 13px 20px;
+    transition: all 0.5s ease-in-out;
+}
+.work_filter ul li:hover{
+	background: #59c378;
+    color: #fff;
+}
+.work_filter .active{
+    color: #fff;
+	border-color: #59c378;
+    background: #59c378;
+}
+.work_content_area .item-img{
+	position: relative;
+	margin-bottom: 30px;
+	-webkit-transition: all .4s;
+	transition: all .4s;
+}
+.work_content_area .item-img:hover{
+	-webkit-box-shadow: -10px 10px 30px rgba(0, 0, 0, 0.1);
+	box-shadow: -10px 10px 30px rgba(0, 0, 0, 0.1);
+}
+.work_content_area .item-img:hover .item-img-overlay{
+	visibility: visible;
+	opacity: 1;
+}
+.overlay-info{
+	margin-top: 90px;
+}
+.work_content_area .item-img-overlay{
+	text-align: center;
+    display: -ms-flexbox !important;
+    display: flex !important;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+	background: rgba(7,10,50,0.6);
+    opacity: 0;
+    -webkit-transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
+}
+.work_content_area .item-img-overlay .icon{
+	position: absolute;
+	right: 30px;
+	bottom: 50px;
+	width: 40px;
+	height: 40px;
+	line-height: 40px;
+	margin-right: 130px;
+	margin-bottom: 35%;
+	text-align: center;
+	font-size: 20px;
+	color: #59c378;
+}
+/* ----------------------------------------------------------------
+    [ End Works ]
+-----------------------------------------------------------------*/
