@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Database Admin</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            padding: 20px;
+        }
+        .table-container {
+            margin-bottom: 30px;
+        }
+        .nav-tabs {
+            margin-bottom: 20px;
+        }
+        .sql-editor {
+            width: 100%;
+            height: 200px;
+            font-family: monospace;
+            margin-bottom: 10px;
+        }
+        .result-container {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            background-color: #f9f9f9;
+            overflow-x: auto;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mb-4">Resume Database Admin</h1>
+        
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="view-tab" data-bs-toggle="tab" data-bs-target="#view" type="button" role="tab" aria-controls="view" aria-selected="true">View Data</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="query-tab" data-bs-toggle="tab" data-bs-target="#query" type="button" role="tab" aria-controls="query" aria-selected="false">Run SQL Query</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="export-tab" data-bs-toggle="tab" data-bs-target="#export" type="button" role="tab" aria-controls="export" aria-selected="false">Export SQL</button>
+            </li>
+        </ul>
+        
+        <div class="tab-content" id="myTabContent">
+            <!-- View Data Tab -->
+            <div class="tab-pane fade show active" id="view" role="tabpanel" aria-labelledby="view-tab">
+                <div class="row mt-4">
+                    <div class="col-md-3">
+                        <div class="list-group" id="table-list">
+                            <a href="#" class="list-group-item list-group-item-action active" data-table="education">Education</a>
+                            <a href="#" class="list-group-item list-group-item-action" data-table="career">Career</a>
+                            <a href="#" class="list-group-item list-group-item-action" data-table="skills">Skills</a>
+                            <a href="#" class="list-group-item list-group-item-action" data-table="languages">Languages</a>
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        <div id="table-container" class="table-container">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h3 id="current-table">Education</h3>
+                                <button id="refresh-btn" class="btn btn-sm btn-outline-secondary">Refresh</button>
+                            </div>
+                            <div id="table-data"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- SQL Query Tab -->
+            <div class="tab-pane fade" id="query" role="tabpanel" aria-labelledby="query-tab">
+                <div class="mt-4">
+                    <h3>Run SQL Query</h3>
+                    <textarea id="sql-query" class="sql-editor">SELECT * FROM education;</textarea>
+                    <button id="run-query" class="btn btn-primary">Run Query</button>
+                    <div id="query-result" class="result-container hidden">
+                        <h4>Results:</h4>
+                        <div id="query-data"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Export SQL Tab -->
+            <div class="tab-pane fade" id="export" role="tabpanel" aria-labelledby="export-tab">
+                <div class="mt-4">
+                    <h3>Export SQL</h3>
+                    <p>This will generate SQL statements to recreate your database.</p>
+                    <button id="export-sql" class="btn btn-success">Generate SQL</button>
+                    <div id="export-result" class="result-container hidden mt-3">
+                        <h4>SQL Statements:</h4>
+                        <textarea id="export-data" class="sql-editor" style="height: 400px;" readonly></textarea>
+                        <button id="copy-sql" class="btn btn-outline-secondary mt-2">Copy to Clipboard</button>
+                        <a id="download-sql" class="btn btn-outline-primary mt-2 ms-2" download="resume.sql">Download SQL File</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
+    <script>
+        // Initialize SQL.js
+        let SQL;
+        let db;
+        
+        async function initSqlJs() {
+            try {
+                console.log('Initializing SQL.js...');
+                
+                // Load SQL.js
+                SQL = await initSqlJs({
+                    locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}`
+                });
+                
+                console.log('SQL.js loaded successfully');
+                
+                try {
+                    // Fetch the database file
+                    const response = await fetch('db/resume.db');
+                    
+                    if (!response.ok) {
+                        throw new Error(`Failed to fetch database: ${response.status} ${response.statusText}`);
+                    }
+                    
+                    const arrayBuffer = await response.arrayBuffer();
+                    const uInt8Array = new Uint8Array(arrayBuffer);
+                    
+                    // Create a database from the fetched file
+                    db = new SQL.Database(uInt8Array);
+                    console.log('Resume database loaded successfully');
+                    
+                    // Load initial table data
+                    loadTableData('education');
+                } catch (fetchError) {
+                    console.error('Error fetching database:', fetchError);
+                    
+                    // Fallback to creating an in-memory database from SQL script
+                    console.log('Attempting to create in-memory database from SQL script...');
+                    
+                    try {
+                        const sqlResponse = await fetch('db/resume.sql');
+                        
+                        if (!sqlResponse.ok) {
+                            throw new Error(`Failed to fetch SQL script: ${sqlResponse.status} ${sqlResponse.statusText}`);
+                        }
+                        
+                        const sqlScript = await sqlResponse.text();
+                        
+                        // Create an empty database
+                        db = new SQL.Database();
+                        
+                        // Execute the SQL script
+                        db.run(sqlScript);
+                        
+                        console.log('In-memory database created successfully');
+                        
+                        // Load initial table data
+                        loadTableData('education');
+                    } catch (sqlError) {
+                        console.error('Error creating in-memory database:', sqlError);
+                        showError('Error loading database', 'There was an error loading the resume database. Please check the console for more details.');
+                    }
+                }
+            } catch (error) {
+                console.error('Error initializing database:', error);
+                showError('Error initializing database', 'There was an error initializing the database. Please check the console for more details.');
+            }
+        }
+        
+        // Show error message
+        function showError(title, message) {
+            const container = document.querySelector('.container');
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'alert alert-danger mt-4';
+            errorDiv.innerHTML = `<h4>${title}</h4><p>${message}</p>`;
+            container.appendChild(errorDiv);
+        }
+        
+        // Load table data
+        function loadTableData(tableName) {
+            try {
+                const result = db.exec(`SELECT * FROM ${tableName}`);
+                const tableContainer = document.getElementById('table-data');
+                
+                if (result.length > 0) {
+                    const columns = result[0].columns;
+                    const values = result[0].values;
+                    
+                    let html = '<table class="table table-striped table-bordered">';
+                    
+                    // Table header
+                    html += '<thead><tr>';
+                    columns.forEach(column => {
+                        html += `<th>${column}</th>`;
+                    });
+                    html += '</tr></thead>';
+                    
+                    // Table body
+                    html += '<tbody>';
+                    values.forEach(row => {
+                        html += '<tr>';
+                        row.forEach(cell => {
+                            html += `<td>${cell}</td>`;
+                        });
+                        html += '</tr>';
+                    });
+                    html += '</tbody></table>';
+                    
+                    tableContainer.innerHTML = html;
+                } else {
+                    tableContainer.innerHTML = `<p>No data found in table ${tableName}</p>`;
+                }
+                
+                // Update current table name
+                document.getElementById('current-table').textContent = tableName.charAt(0).toUpperCase() + tableName.slice(1);
+                
+                // Update active table in list
+                document.querySelectorAll('#table-list a').forEach(item => {
+                    item.classList.remove('active');
+                    if (item.getAttribute('data-table') === tableName) {
+                        item.classList.add('active');
+                    }
+                });
+            } catch (error) {
+                console.error(`Error loading table ${tableName}:`, error);
+                document.getElementById('table-data').innerHTML = `<p class="text-danger">Error: ${error.message}</p>`;
+            }
+        }
+        
+        // Run SQL query
+        function runSqlQuery() {
+            const query = document.getElementById('sql-query').value;
+            const resultContainer = document.getElementById('query-result');
+            const queryData = document.getElementById('query-data');
+            
+            try {
+                const result = db.exec(query);
+                resultContainer.classList.remove('hidden');
+                
+                if (result.length > 0) {
+                    const columns = result[0].columns;
+                    const values = result[0].values;
+                    
+                    let html = '<table class="table table-striped table-bordered">';
+                    
+                    // Table header
+                    html += '<thead><tr>';
+                    columns.forEach(column => {
+                        html += `<th>${column}</th>`;
+                    });
+                    html += '</tr></thead>';
+                    
+                    // Table body
+                    html += '<tbody>';
+                    values.forEach(row => {
+                        html += '<tr>';
+                        row.forEach(cell => {
+                            html += `<td>${cell}</td>`;
+                        });
+                        html += '</tr>';
+                    });
+                    html += '</tbody></table>';
+                    
+                    queryData.innerHTML = html;
+                } else {
+                    queryData.innerHTML = '<p>Query executed successfully. No results returned.</p>';
+                }
+            } catch (error) {
+                console.error('Error executing query:', error);
+                resultContainer.classList.remove('hidden');
+                queryData.innerHTML = `<p class="text-danger">Error: ${error.message}</p>`;
+            }
+        }
+        
+        // Export SQL
+        function exportSql() {
+            try {
+                const tables = ['education', 'career', 'skills', 'languages'];
+                let sql = '-- Resume Database Schema\n\n';
+                
+                // Create tables
+                sql += '-- Education table\n';
+                sql += 'CREATE TABLE IF NOT EXISTS education (\n';
+                sql += '    id INTEGER PRIMARY KEY,\n';
+                sql += '    graduation_year TEXT,\n';
+                sql += '    institution TEXT,\n';
+                sql += '    degree TEXT,\n';
+                sql += '    description TEXT\n';
+                sql += ');\n\n';
+                
+                sql += '-- Career table\n';
+                sql += 'CREATE TABLE IF NOT EXISTS career (\n';
+                sql += '    id INTEGER PRIMARY KEY,\n';
+                sql += '    date_range TEXT,\n';
+                sql += '    company TEXT,\n';
+                sql += '    position TEXT,\n';
+                sql += '    location TEXT\n';
+                sql += ');\n\n';
+                
+                sql += '-- Skills table\n';
+                sql += 'CREATE TABLE IF NOT EXISTS skills (\n';
+                sql += '    id INTEGER PRIMARY KEY,\n';
+                sql += '    name TEXT,\n';
+                sql += '    percentage INTEGER,\n';
+                sql += '    description TEXT\n';
+                sql += ');\n\n';
+                
+                sql += '-- Language skills table\n';
+                sql += 'CREATE TABLE IF NOT EXISTS languages (\n';
+                sql += '    id INTEGER PRIMARY KEY,\n';
+                sql += '    name TEXT,\n';
+                sql += '    percentage INTEGER\n';
+                sql += ');\n\n';
+                
+                // Insert data
+                tables.forEach(table => {
+                    const result = db.exec(`SELECT * FROM ${table}`);
+                    if (result.length > 0) {
+                        const columns = result[0].columns.filter(col => col !== 'id');
+                        const values = result[0].values;
+                        
+                        sql += `-- Insert ${table.charAt(0).toUpperCase() + table.slice(1)} Data\n`;
+                        
+                        values.forEach(row => {
+                            const rowData = row.slice(1); // Skip id column
+                            const escapedValues = rowData.map(val => {
+                                if (val === null) return 'NULL';
+                                if (typeof val === 'string') {
+                                    return `'${val.replace(/'/g, "''")}'`;
+                                }
+                                return val;
+                            });
+                            
+                            sql += `INSERT INTO ${table} (${columns.join(', ')}) VALUES\n`;
+                            sql += `(${escapedValues.join(', ')});\n`;
+                        });
+                        
+                        sql += '\n';
+                    }
+                });
+                
+                document.getElementById('export-data').value = sql;
+                document.getElementById('export-result').classList.remove('hidden');
+                
+                // Set up download link
+                const blob = new Blob([sql], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                document.getElementById('download-sql').href = url;
+            } catch (error) {
+                console.error('Error exporting SQL:', error);
+                document.getElementById('export-data').value = `Error: ${error.message}`;
+                document.getElementById('export-result').classList.remove('hidden');
+            }
+        }
+        
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize SQL.js
+            initSqlJs();
+            
+            // Table list click event
+            document.getElementById('table-list').addEventListener('click', (e) => {
+                if (e.target.hasAttribute('data-table')) {
+                    e.preventDefault();
+                    const tableName = e.target.getAttribute('data-table');
+                    loadTableData(tableName);
+                }
+            });
+            
+            // Refresh button click event
+            document.getElementById('refresh-btn').addEventListener('click', () => {
+                const activeTable = document.querySelector('#table-list a.active').getAttribute('data-table');
+                loadTableData(activeTable);
+            });
+            
+            // Run query button click event
+            document.getElementById('run-query').addEventListener('click', runSqlQuery);
+            
+            // Export SQL button click event
+            document.getElementById('export-sql').addEventListener('click', exportSql);
+            
+            // Copy SQL button click event
+            document.getElementById('copy-sql').addEventListener('click', () => {
+                const sqlText = document.getElementById('export-data');
+                sqlText.select();
+                document.execCommand('copy');
+                alert('SQL copied to clipboard!');
+            });
+        });
+    </script>
+</body>
+</html> 
