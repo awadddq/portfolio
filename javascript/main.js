@@ -12,6 +12,7 @@ $(function() {
     var royhero = $(".clayhero-img");
     var testimon = $(".testimonial-section");
     var Brand = $('#the-brand');
+    var achievements = $('#the-achievements');
     var BodyElement = $('html, body');
     var Header = $('#clay-headermain');
     var popupImage = $(".popup-image");
@@ -91,6 +92,28 @@ var carouselclient = function(event) {
             }
         });
     }
+// OwlCarousel achievements init
+var carouselachievements = function(event) {
+    achievements.owlCarousel({
+        responsiveClass: true,
+        dots: false,
+        autoplay: false,
+        autoplayTimeout: 5000,
+        loop: true,
+        autoplayHoverPause: true,
+        responsive: {
+            0: {
+                items: 2
+            },
+            680: {
+                items: 3
+            },
+            960: {
+                items: 3
+            }
+        }
+    });
+}
     // OwlCarousel hero init
 var testimoni = function() {
         testimon.on('initialized.owl.carousel changed.owl.carousel', function(e) {
@@ -319,6 +342,7 @@ $(document).ready(function () {
     subform();
     slider();
     carouselclient();
+    carouselachievements();
     testimoni();
 });
 });
