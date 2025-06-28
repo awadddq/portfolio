@@ -97,8 +97,8 @@ var carouselachievements = function(event) {
     achievements.owlCarousel({
         responsiveClass: true,
         dots: false,
-        autoplay: false,
-        autoplayTimeout: 5000,
+        autoplay: true,
+        autoplayTimeout: 1500,
         loop: true,
         autoplayHoverPause: true,
         responsive: {
@@ -125,7 +125,7 @@ var testimoni = function() {
             var carousels = e.relatedTarget;
         }).owlCarousel({
             autoplay: true,
-            autoplayTimeout: 4000,
+            autoplayTimeout: 3000,
             loop: true,
             items: 1,
             autoplayHoverPause: true,
