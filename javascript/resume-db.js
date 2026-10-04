@@ -14,6 +14,18 @@ async function initDatabase() {
         
         console.log('SQL.js loaded successfully');
         
+        // Preview unpublished changes from admin.html (index.html?preview=draft)
+        const draft = loadAdminDraft();
+        if (draft) {
+            db = new SQL.Database(draft);
+            console.log('Showing unpublished draft from admin.html');
+            loadEducationData();
+            loadCareerData();
+            loadSkillsData();
+            loadLanguageData();
+            return;
+        }
+        
         try {
             // Fetch the database file
             const response = await fetch('db/resume.db');
@@ -73,6 +85,22 @@ async function initDatabase() {
     }
 }
 
+// Read the draft database saved by admin.html, only when ?preview=draft is in the URL
+function loadAdminDraft() {
+    try {
+        if (new URLSearchParams(location.search).get('preview') !== 'draft') return null;
+        const b64 = localStorage.getItem('resumeAdmin.draft');
+        if (!b64) return null;
+        const bin = atob(b64);
+        const bytes = new Uint8Array(bin.length);
+        for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+        return bytes;
+    } catch (error) {
+        console.error('Error loading admin draft:', error);
+        return null;
+    }
+}
+
 // Load education data
 function loadEducationData() {
     try {
@@ -91,7 +119,7 @@ function loadEducationData() {
                         </span>
                         <div class="wrp-detail">
                             <h3>${row[2]}</h3>
-                            <p>${row[3]}, ${row[4]}</p>
+                            <p>${[row[3], row[4]].filter(Boolean).join(', ')}</p>
                         </div>
                     </div>
                     `;

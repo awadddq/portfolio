@@ -25,12 +25,13 @@ Alternatively, you can manually update the database with:
 
 ## Admin Interface
 
-An admin interface is available at `/admin.html` that allows you to:
-- View the database tables
-- Run SQL queries
-- Export the database as SQL statements
+Open `/admin.html` (via `./start-server.sh`) to manage the resume section without touching SQL:
 
-This is useful for managing your resume data without having to edit the SQL file directly.
+- Add, edit, duplicate, delete (with undo) and reorder (drag & drop) Education, Career, Skills and Languages entries
+- Live preview of each entry as it appears on the resume page
+- Changes are auto-saved as a draft in your browser; open `index.html?preview=draft#resumepage` to preview them on the real site
+- **Publish & Export** downloads `resume.db` and `resume.sql` — replace the files in `db/`, then run `./deploy.sh`
+- Import an existing `.db` / `.sql` file, and an SQL console for advanced edits
 
 ## Database Structure
 

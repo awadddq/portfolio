@@ -3,397 +3,1461 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resume Database Admin</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Resume Admin</title>
+    <link rel="shortcut icon" href="image/asset/favicon.ico" type="image/x-icon" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg: #f6f7f9;
+            --surface: #ffffff;
+            --surface-2: #f1f3f6;
+            --border: #e4e7ec;
+            --text: #101828;
+            --text-2: #475467;
+            --text-3: #98a2b3;
+            --accent: #ff5e15;
+            --accent-2: #ea8144;
+            --accent-soft: #fff1ea;
+            --danger: #d92d20;
+            --danger-soft: #fef3f2;
+            --success: #079455;
+            --success-soft: #ecfdf3;
+            --warning: #b54708;
+            --warning-soft: #fffaeb;
+            --shadow-sm: 0 1px 2px rgba(16, 24, 40, .06);
+            --shadow-md: 0 4px 12px rgba(16, 24, 40, .08);
+            --shadow-lg: 0 20px 40px -8px rgba(16, 24, 40, .18);
+            --radius: 12px;
+            --radius-sm: 8px;
+            --preview-bg: #111111;
+        }
+        :root[data-theme="dark"] {
+            --bg: #0c0d10;
+            --surface: #15171c;
+            --surface-2: #1d2027;
+            --border: #2a2e37;
+            --text: #f2f4f7;
+            --text-2: #b4bac5;
+            --text-3: #6b7280;
+            --accent-soft: rgba(255, 94, 21, .14);
+            --danger-soft: rgba(217, 45, 32, .15);
+            --success-soft: rgba(7, 148, 85, .15);
+            --warning-soft: rgba(181, 71, 8, .18);
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, .4);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, .4);
+            --shadow-lg: 0 20px 40px -8px rgba(0, 0, 0, .6);
+            --preview-bg: #0a0a0a;
+        }
+
+        * { box-sizing: border-box; }
+        html, body { margin: 0; height: 100%; }
         body {
-            padding: 20px;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            font-size: 14px;
+            line-height: 1.5;
+            color: var(--text);
+            background: var(--bg);
+            -webkit-font-smoothing: antialiased;
         }
-        .table-container {
-            margin-bottom: 30px;
+        button, input, textarea, select { font: inherit; color: inherit; }
+        svg { flex-shrink: 0; }
+        a { color: inherit; }
+
+        /* ---------- Layout ---------- */
+        .app { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; }
+        .sidebar {
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            padding: 20px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
         }
-        .nav-tabs {
-            margin-bottom: 20px;
+        .brand { display: flex; align-items: center; gap: 10px; padding: 4px 10px 20px; }
+        .brand-logo {
+            width: 34px; height: 34px; border-radius: 9px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            display: grid; place-items: center; color: #fff; font-weight: 700;
         }
+        .brand-title { font-weight: 700; font-size: 15px; }
+        .brand-sub { font-size: 12px; color: var(--text-3); }
+        .nav-label {
+            font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em;
+            color: var(--text-3); padding: 14px 10px 6px;
+        }
+        .nav-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 9px 10px; border-radius: var(--radius-sm);
+            border: 0; background: none; cursor: pointer; text-align: left; width: 100%;
+            color: var(--text-2); font-weight: 500;
+            transition: background .15s, color .15s;
+        }
+        .nav-item:hover { background: var(--surface-2); color: var(--text); }
+        .nav-item.active { background: var(--accent-soft); color: var(--accent); }
+        .nav-item .count {
+            margin-left: auto; font-size: 12px; font-weight: 600;
+            background: var(--surface-2); color: var(--text-2);
+            padding: 1px 8px; border-radius: 999px;
+        }
+        .nav-item.active .count { background: var(--accent); color: #fff; }
+        .sidebar-footer { margin-top: auto; padding-top: 16px; display: flex; flex-direction: column; gap: 8px; }
+
+        .main { min-width: 0; display: flex; flex-direction: column; }
+        .topbar {
+            position: sticky; top: 0; z-index: 10;
+            display: flex; align-items: center; gap: 12px;
+            padding: 14px 32px;
+            background: color-mix(in srgb, var(--bg) 85%, transparent);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+        }
+        .menu-btn { display: none; }
+        .status-pill {
+            display: inline-flex; align-items: center; gap: 7px;
+            font-size: 12.5px; font-weight: 500; padding: 5px 11px; border-radius: 999px;
+            background: var(--success-soft); color: var(--success);
+        }
+        .status-pill .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+        .status-pill.dirty { background: var(--warning-soft); color: var(--warning); }
+        .topbar .spacer { flex: 1; }
+        .content { padding: 28px 32px 60px; max-width: 1100px; width: 100%; }
+
+        .page-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 22px; flex-wrap: wrap; }
+        .page-head h1 { margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -.01em; }
+        .page-head p { margin: 4px 0 0; color: var(--text-2); }
+
+        /* ---------- Buttons ---------- */
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+            padding: 8px 14px; border-radius: var(--radius-sm);
+            border: 1px solid var(--border); background: var(--surface);
+            font-weight: 600; font-size: 13.5px; cursor: pointer; white-space: nowrap;
+            box-shadow: var(--shadow-sm); text-decoration: none;
+            transition: background .15s, border-color .15s, transform .05s;
+        }
+        .btn:hover { background: var(--surface-2); }
+        .btn:active { transform: translateY(1px); }
+        .btn:focus-visible, .nav-item:focus-visible, .icon-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+        .btn:disabled { opacity: .5; cursor: not-allowed; }
+        .btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+        .btn-primary:hover { background: #f04f08; }
+        .btn-danger { background: var(--danger); border-color: var(--danger); color: #fff; }
+        .btn-danger:hover { background: #b42318; }
+        .btn-ghost { background: none; box-shadow: none; border-color: transparent; }
+        .btn-block { width: 100%; }
+        .btn-sm { padding: 6px 10px; font-size: 12.5px; }
+        .icon-btn {
+            width: 32px; height: 32px; display: grid; place-items: center;
+            border-radius: var(--radius-sm); border: 0; background: none; cursor: pointer; color: var(--text-2);
+        }
+        .icon-btn:hover { background: var(--surface-2); color: var(--text); }
+        .icon-btn.danger:hover { background: var(--danger-soft); color: var(--danger); }
+        .icon-btn:disabled { opacity: .3; cursor: default; background: none; }
+        kbd {
+            font-family: 'JetBrains Mono', monospace; font-size: 11px;
+            padding: 1px 5px; border-radius: 4px; border: 1px solid var(--border);
+            background: var(--surface-2); color: var(--text-2);
+        }
+
+        /* ---------- Banner ---------- */
+        .banner {
+            display: flex; align-items: center; gap: 12px;
+            padding: 12px 16px; border-radius: var(--radius); margin-bottom: 20px;
+            background: var(--warning-soft); color: var(--warning); font-weight: 500;
+            border: 1px solid color-mix(in srgb, var(--warning) 25%, transparent);
+        }
+        .banner .grow { flex: 1; }
+        .banner.info { background: var(--accent-soft); color: var(--accent); border-color: color-mix(in srgb, var(--accent) 25%, transparent); }
+
+        /* ---------- Entry list ---------- */
+        .entries { display: flex; flex-direction: column; gap: 10px; }
+        .entry {
+            display: flex; align-items: center; gap: 14px;
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 14px 14px 14px 10px;
+            box-shadow: var(--shadow-sm);
+            transition: border-color .15s, box-shadow .15s, opacity .15s;
+        }
+        .entry:hover { border-color: color-mix(in srgb, var(--accent) 40%, var(--border)); box-shadow: var(--shadow-md); }
+        .entry.dragging { opacity: .4; }
+        .entry.drop-before { box-shadow: 0 -3px 0 var(--accent); }
+        .entry.drop-after { box-shadow: 0 3px 0 var(--accent); }
+        .drag-handle { cursor: grab; color: var(--text-3); padding: 4px; display: grid; place-items: center; }
+        .drag-handle:active { cursor: grabbing; }
+        .entry-num {
+            width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
+            display: grid; place-items: center; font-weight: 700; font-size: 12.5px;
+            background: var(--accent-soft); color: var(--accent);
+        }
+        .entry-body { flex: 1; min-width: 0; cursor: pointer; }
+        .entry-title { font-weight: 600; font-size: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .entry-sub { color: var(--text-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .entry-meta { font-size: 12.5px; color: var(--text-3); margin-top: 2px; }
+        .entry-pct { width: 150px; flex-shrink: 0; }
+        .bar { height: 6px; border-radius: 999px; background: var(--surface-2); overflow: hidden; }
+        .bar > span { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); border-radius: inherit; }
+        .entry-pct .pct-label { font-size: 12px; font-weight: 600; color: var(--text-2); margin-bottom: 4px; text-align: right; }
+        .entry-actions { display: flex; gap: 2px; }
+
+        .empty {
+            text-align: center; padding: 56px 20px;
+            background: var(--surface); border: 1.5px dashed var(--border); border-radius: var(--radius);
+        }
+        .empty .empty-icon {
+            width: 52px; height: 52px; margin: 0 auto 14px; border-radius: 14px;
+            display: grid; place-items: center; background: var(--accent-soft); color: var(--accent);
+        }
+        .empty h3 { margin: 0 0 4px; font-size: 16px; }
+        .empty p { margin: 0 0 18px; color: var(--text-2); }
+
+        .loading { display: grid; place-items: center; padding: 80px 0; color: var(--text-2); gap: 12px; }
+        .spinner { width: 28px; height: 28px; border-radius: 50%; border: 3px solid var(--border); border-top-color: var(--accent); animation: spin .8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ---------- Cards (publish / sql) ---------- */
+        .card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow-sm); margin-bottom: 16px;
+        }
+        .card h2 { margin: 0 0 4px; font-size: 16px; }
+        .card > p { margin: 0 0 16px; color: var(--text-2); }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .steps { margin: 0; padding: 0; list-style: none; counter-reset: s; display: flex; flex-direction: column; gap: 12px; }
+        .steps li { counter-increment: s; display: flex; gap: 12px; color: var(--text-2); }
+        .steps li::before {
+            content: counter(s); flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%;
+            background: var(--accent-soft); color: var(--accent); font-weight: 700; font-size: 12px;
+            display: grid; place-items: center;
+        }
+        .steps strong { color: var(--text); }
+        code, .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12.5px; }
+        code { background: var(--surface-2); padding: 1px 6px; border-radius: 5px; }
+        .btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
+        .stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
+        .stat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; }
+        .stat .k { font-size: 12px; color: var(--text-3); font-weight: 500; }
+        .stat .v { font-size: 22px; font-weight: 700; }
+
         .sql-editor {
-            width: 100%;
-            height: 200px;
-            font-family: monospace;
-            margin-bottom: 10px;
+            width: 100%; min-height: 160px; resize: vertical;
+            font-family: 'JetBrains Mono', monospace; font-size: 13px;
+            padding: 14px; border-radius: var(--radius-sm);
+            border: 1px solid var(--border); background: var(--surface-2); color: var(--text);
         }
-        .result-container {
-            margin-top: 20px;
-            border: 1px solid #ddd;
-            padding: 10px;
-            background-color: #f9f9f9;
-            overflow-x: auto;
+        .sql-editor:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+        .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius-sm); margin-top: 14px; }
+        table { border-collapse: collapse; width: 100%; font-size: 13px; }
+        th, td { padding: 9px 12px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+        th { background: var(--surface-2); font-weight: 600; color: var(--text-2); white-space: nowrap; }
+        td { max-width: 380px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        tr:last-child td { border-bottom: 0; }
+        .result-msg { margin-top: 12px; padding: 10px 14px; border-radius: var(--radius-sm); font-weight: 500; }
+        .result-msg.ok { background: var(--success-soft); color: var(--success); }
+        .result-msg.err { background: var(--danger-soft); color: var(--danger); }
+
+        /* ---------- Drawer (editor) ---------- */
+        dialog { border: 0; padding: 0; color: var(--text); background: var(--surface); }
+        dialog::backdrop { background: rgba(16, 24, 40, .45); backdrop-filter: blur(2px); }
+        .drawer {
+            margin: 0 0 0 auto; height: 100vh; max-height: 100vh; width: min(560px, 100vw);
+            box-shadow: var(--shadow-lg);
         }
-        .hidden {
-            display: none;
+        .drawer[open] { animation: slideIn .22s cubic-bezier(.2, .8, .2, 1); }
+        @keyframes slideIn { from { transform: translateX(40px); opacity: 0; } }
+        .drawer form { display: flex; flex-direction: column; height: 100%; }
+        .drawer-head { display: flex; align-items: center; gap: 12px; padding: 18px 22px; border-bottom: 1px solid var(--border); }
+        .drawer-head h2 { margin: 0; font-size: 17px; flex: 1; }
+        .drawer-body { flex: 1; overflow-y: auto; padding: 22px; display: flex; flex-direction: column; gap: 18px; }
+        .drawer-foot { display: flex; gap: 8px; align-items: center; padding: 14px 22px; border-top: 1px solid var(--border); background: var(--surface); }
+        .drawer-foot .hint { color: var(--text-3); font-size: 12px; margin-right: auto; }
+
+        .field label { display: flex; justify-content: space-between; font-weight: 600; font-size: 13px; margin-bottom: 6px; }
+        .field label .req { color: var(--accent); }
+        .field label .counter { font-weight: 400; color: var(--text-3); font-size: 12px; }
+        .field .help { font-size: 12.5px; color: var(--text-3); margin-top: 5px; }
+        .input {
+            width: 100%; padding: 9px 12px; border-radius: var(--radius-sm);
+            border: 1px solid var(--border); background: var(--surface);
+            transition: border-color .15s, box-shadow .15s;
+        }
+        textarea.input { resize: vertical; min-height: 90px; line-height: 1.55; }
+        .input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+        .field.invalid .input { border-color: var(--danger); }
+        .field .error { display: none; font-size: 12.5px; color: var(--danger); margin-top: 5px; }
+        .field.invalid .error { display: block; }
+        .range-row { display: flex; align-items: center; gap: 14px; }
+        .range-row input[type=range] { flex: 1; accent-color: var(--accent); }
+        .range-row .input { width: 84px; text-align: center; }
+        .chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+        .chip {
+            font-size: 12px; padding: 3px 10px; border-radius: 999px; cursor: pointer;
+            border: 1px solid var(--border); background: var(--surface-2); color: var(--text-2);
+        }
+        .chip:hover { border-color: var(--accent); color: var(--accent); }
+
+        /* Live preview mimics the public resume section */
+        .preview-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--text-3); margin-bottom: 8px; }
+        .preview {
+            background: var(--preview-bg); color: #fff; border-radius: var(--radius);
+            padding: 22px; font-family: 'Roboto', 'Inter', sans-serif;
+        }
+        .pv-item { display: flex; gap: 16px; }
+        .pv-numb { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; min-width: 110px; }
+        .pv-bulet { font-size: 26px; font-weight: 600; color: var(--accent); line-height: 1; }
+        .pv-date { font-size: 12px; color: rgba(255, 255, 255, .55); }
+        .pv-detail h3 { margin: 0 0 4px; font-size: 16px; font-weight: 500; text-transform: uppercase; letter-spacing: .02em; }
+        .pv-detail p { margin: 0; color: rgba(255, 255, 255, .6); font-size: 13px; }
+        .pv-skill { display: flex; gap: 18px; align-items: flex-start; }
+        .pv-ring {
+            --p: 0; width: 84px; height: 84px; border-radius: 50%; flex-shrink: 0;
+            background: conic-gradient(var(--accent) calc(var(--p) * 1%), rgba(255, 255, 255, .08) 0);
+            display: grid; place-items: center;
+        }
+        .pv-ring::after {
+            content: attr(data-label); width: 74px; height: 74px; border-radius: 50%;
+            background: var(--preview-bg); display: grid; place-items: center;
+            font-size: 12px; color: rgba(255, 255, 255, .4);
+        }
+        .pv-skill .t { font-weight: 500; text-transform: uppercase; margin: 4px 0 6px; }
+        .pv-skill .d { color: rgba(255, 255, 255, .55); font-size: 12.5px; margin: 0; display: -webkit-box; -webkit-line-clamp: 5; line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; }
+        .pv-lang .n { text-transform: uppercase; font-size: 13px; margin: 0 0 8px; }
+        .pv-lang .b { height: 4px; background: rgba(255, 255, 255, .1); }
+        .pv-lang .b span { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); transition: width .25s; }
+        .muted { color: rgba(255, 255, 255, .3) !important; font-style: italic; }
+
+        /* ---------- Confirm dialog ---------- */
+        .modal { width: min(420px, calc(100vw - 32px)); border-radius: var(--radius); box-shadow: var(--shadow-lg); }
+        .modal[open] { animation: pop .18s ease-out; }
+        @keyframes pop { from { transform: scale(.96); opacity: 0; } }
+        .modal-body { padding: 24px 24px 8px; display: flex; gap: 16px; }
+        .modal-icon { width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; background: var(--danger-soft); color: var(--danger); flex-shrink: 0; }
+        .modal h3 { margin: 4px 0 6px; font-size: 16px; }
+        .modal p { margin: 0; color: var(--text-2); }
+        .modal-foot { display: flex; justify-content: flex-end; gap: 8px; padding: 18px 24px 22px; }
+
+        /* ---------- Toasts ---------- */
+        .toasts { position: fixed; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 8px; z-index: 100; }
+        .toast {
+            display: flex; align-items: center; gap: 10px; min-width: 260px; max-width: 380px;
+            padding: 12px 14px; border-radius: var(--radius-sm);
+            background: #101828; color: #fff; box-shadow: var(--shadow-lg); font-weight: 500;
+            animation: toastIn .2s ease-out;
+        }
+        .toast .ic { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; background: var(--success); }
+        .toast.err .ic { background: var(--danger); }
+        .toast .undo { margin-left: auto; color: var(--accent-2); background: none; border: 0; cursor: pointer; font-weight: 700; }
+        @keyframes toastIn { from { transform: translateY(10px); opacity: 0; } }
+
+        .hidden { display: none !important; }
+        .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+        /* ---------- Responsive ---------- */
+        @media (max-width: 900px) {
+            .app { grid-template-columns: 1fr; }
+            .sidebar {
+                position: fixed; inset: 0 auto 0 0; width: 270px; z-index: 50;
+                transform: translateX(-100%); transition: transform .2s; box-shadow: var(--shadow-lg);
+            }
+            .sidebar.open { transform: none; }
+            .menu-btn { display: grid; }
+            .topbar { padding: 12px 16px; }
+            .content { padding: 20px 16px 60px; }
+            .grid-2, .stat-row { grid-template-columns: 1fr 1fr; }
+            .entry-pct { width: 90px; }
+            .topbar .btn-label { display: none; }
+        }
+        @media (max-width: 560px) {
+            .grid-2 { grid-template-columns: 1fr; }
+            .entry { flex-wrap: wrap; }
+            .entry-body { flex: 1 1 calc(100% - 60px); }
+            .entry-pct { order: 5; width: 100%; padding-left: 48px; }
+            .entry-actions { order: 6; width: 100%; justify-content: flex-end; border-top: 1px solid var(--border); padding-top: 6px; }
+            .entry-title, .entry-sub { white-space: normal; }
+            .status-pill { white-space: nowrap; min-width: 0; overflow: hidden; }
+            .drag-handle { display: none; }
+            .pv-item { flex-direction: column; gap: 8px; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1 class="mb-4">Resume Database Admin</h1>
-        
-        <ul class="nav nav-tabs" id="myTab" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="view-tab" data-bs-toggle="tab" data-bs-target="#view" type="button" role="tab" aria-controls="view" aria-selected="true">View Data</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="query-tab" data-bs-toggle="tab" data-bs-target="#query" type="button" role="tab" aria-controls="query" aria-selected="false">Run SQL Query</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="export-tab" data-bs-toggle="tab" data-bs-target="#export" type="button" role="tab" aria-controls="export" aria-selected="false">Export SQL</button>
-            </li>
-        </ul>
-        
-        <div class="tab-content" id="myTabContent">
-            <!-- View Data Tab -->
-            <div class="tab-pane fade show active" id="view" role="tabpanel" aria-labelledby="view-tab">
-                <div class="row mt-4">
-                    <div class="col-md-3">
-                        <div class="list-group" id="table-list">
-                            <a href="#" class="list-group-item list-group-item-action active" data-table="education">Education</a>
-                            <a href="#" class="list-group-item list-group-item-action" data-table="career">Career</a>
-                            <a href="#" class="list-group-item list-group-item-action" data-table="skills">Skills</a>
-                            <a href="#" class="list-group-item list-group-item-action" data-table="languages">Languages</a>
-                        </div>
-                    </div>
-                    <div class="col-md-9">
-                        <div id="table-container" class="table-container">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h3 id="current-table">Education</h3>
-                                <button id="refresh-btn" class="btn btn-sm btn-outline-secondary">Refresh</button>
-                            </div>
-                            <div id="table-data"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- SQL Query Tab -->
-            <div class="tab-pane fade" id="query" role="tabpanel" aria-labelledby="query-tab">
-                <div class="mt-4">
-                    <h3>Run SQL Query</h3>
-                    <textarea id="sql-query" class="sql-editor">SELECT * FROM education;</textarea>
-                    <button id="run-query" class="btn btn-primary">Run Query</button>
-                    <div id="query-result" class="result-container hidden">
-                        <h4>Results:</h4>
-                        <div id="query-data"></div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Export SQL Tab -->
-            <div class="tab-pane fade" id="export" role="tabpanel" aria-labelledby="export-tab">
-                <div class="mt-4">
-                    <h3>Export SQL</h3>
-                    <p>This will generate SQL statements to recreate your database.</p>
-                    <button id="export-sql" class="btn btn-success">Generate SQL</button>
-                    <div id="export-result" class="result-container hidden mt-3">
-                        <h4>SQL Statements:</h4>
-                        <textarea id="export-data" class="sql-editor" style="height: 400px;" readonly></textarea>
-                        <button id="copy-sql" class="btn btn-outline-secondary mt-2">Copy to Clipboard</button>
-                        <a id="download-sql" class="btn btn-outline-primary mt-2 ms-2" download="resume.sql">Download SQL File</a>
-                    </div>
-                </div>
+<div class="app">
+    <!-- ================= SIDEBAR ================= -->
+    <aside class="sidebar" id="sidebar">
+        <div class="brand">
+            <div class="brand-logo">R</div>
+            <div>
+                <div class="brand-title">Resume Admin</div>
+                <div class="brand-sub">Content manager</div>
             </div>
         </div>
-    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
-    <script>
-        // Initialize SQL.js
-        let SQL;
-        let db;
-        
-        async function initSqlJs() {
+        <div class="nav-label">Resume sections</div>
+        <nav id="section-nav"></nav>
+
+        <div class="nav-label">Tools</div>
+        <button class="nav-item" data-view="publish">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Publish &amp; Export
+        </button>
+        <button class="nav-item" data-view="sql">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+            SQL Console
+        </button>
+
+        <div class="sidebar-footer">
+            <a class="btn btn-block" href="index.html?preview=draft#resumepage" target="_blank" rel="noopener">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                Preview on site
+            </a>
+            <button class="btn btn-block btn-ghost" id="theme-toggle">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                <span>Toggle theme</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- ================= MAIN ================= -->
+    <div class="main">
+        <header class="topbar">
+            <button class="icon-btn menu-btn" id="menu-btn" aria-label="Open menu">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            </button>
+            <span class="status-pill" id="status-pill"><span class="dot"></span><span id="status-text">Loading…</span></span>
+            <span class="spacer"></span>
+            <button class="btn" id="import-btn" title="Import a .db or .sql file">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                <span class="btn-label">Import</span>
+            </button>
+            <button class="btn btn-primary" id="publish-btn" title="Publish & export (Ctrl/⌘ + S)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                <span class="btn-label">Publish</span>
+            </button>
+            <input type="file" id="import-file" accept=".db,.sqlite,.sqlite3,.sql" class="hidden">
+        </header>
+
+        <main class="content" id="content">
+            <div class="loading"><div class="spinner"></div>Loading resume database…</div>
+        </main>
+    </div>
+</div>
+
+<!-- ================= EDITOR DRAWER ================= -->
+<dialog class="drawer" id="editor">
+    <form id="editor-form" novalidate>
+        <div class="drawer-head">
+            <h2 id="editor-title">Add entry</h2>
+            <button type="button" class="icon-btn" data-close aria-label="Close">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div class="drawer-body">
+            <div id="editor-fields" style="display:flex;flex-direction:column;gap:18px"></div>
+            <div>
+                <div class="preview-label">Live preview — how it appears on your resume</div>
+                <div class="preview" id="editor-preview"></div>
+            </div>
+        </div>
+        <div class="drawer-foot">
+            <span class="hint"><kbd>Ctrl</kbd> + <kbd>Enter</kbd> to save</span>
+            <button type="button" class="btn" data-close>Cancel</button>
+            <button type="submit" class="btn btn-primary" id="editor-submit">Save entry</button>
+        </div>
+    </form>
+</dialog>
+
+<!-- ================= CONFIRM MODAL ================= -->
+<dialog class="modal" id="confirm">
+    <div class="modal-body">
+        <div class="modal-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <div>
+            <h3 id="confirm-title">Are you sure?</h3>
+            <p id="confirm-text"></p>
+        </div>
+    </div>
+    <div class="modal-foot">
+        <button class="btn" id="confirm-cancel">Cancel</button>
+        <button class="btn btn-danger" id="confirm-ok">Confirm</button>
+    </div>
+</dialog>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
+<script>
+(() => {
+    'use strict';
+
+    // =====================================================================
+    // Config — one entry per table rendered in the #clay-resumepage section
+    // =====================================================================
+    const DRAFT_KEY = 'resumeAdmin.draft';
+    const DRAFT_TIME_KEY = 'resumeAdmin.draftSavedAt';
+    const THEME_KEY = 'resumeAdmin.theme';
+
+    const ICONS = {
+        education: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></svg>',
+        career: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>',
+        skills: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
+        languages: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>'
+    };
+
+    const SECTIONS = {
+        education: {
+            label: 'Education',
+            singular: 'education entry',
+            description: 'Degrees and schools shown under “Education Journey”.',
+            fields: [
+                { key: 'graduation_year', label: 'Date', required: true, placeholder: 'Graduated 2017', help: 'Shown under the number badge.', chips: ['Graduated ' + new Date().getFullYear(), 'Expected ' + (new Date().getFullYear() + 1)] },
+                { key: 'institution', label: 'Institution', required: true, placeholder: 'Tokyo University of Technology', help: 'Shown as the heading.' },
+                { key: 'degree', label: 'Degree', required: true, placeholder: 'Bachelor of Computer Science' },
+                { key: 'description', label: 'Major / specialization', placeholder: 'System Engineering', help: 'Appended after the degree, separated by a comma.' }
+            ],
+            title: r => r.institution,
+            subtitle: r => [r.degree, r.description].filter(Boolean).join(', '),
+            meta: r => r.graduation_year
+        },
+        career: {
+            label: 'Career',
+            singular: 'career entry',
+            description: 'Work experience shown under “Career Journey”.',
+            fields: [
+                { key: 'date_range', label: 'Date range', required: true, placeholder: 'July 2022 - Present' },
+                { key: 'company', label: 'Company', required: true, placeholder: 'Company name', help: 'Shown as the heading.' },
+                { key: 'position', label: 'Position / role', required: true, type: 'textarea', rows: 3, placeholder: 'Senior Applications & Analytics Specialist' },
+                { key: 'location', label: 'Location', placeholder: 'Riyadh, Saudi Arabia', help: 'Optional — leave empty to hide.' }
+            ],
+            title: r => r.company,
+            subtitle: r => r.position,
+            meta: r => [r.date_range, r.location].filter(Boolean).join(' · ')
+        },
+        skills: {
+            label: 'Skills',
+            singular: 'skill',
+            description: 'Skill circles with a percentage and a short description.',
+            fields: [
+                { key: 'name', label: 'Skill name', required: true, placeholder: 'Programming' },
+                { key: 'percentage', label: 'Proficiency', type: 'percent', required: true },
+                { key: 'description', label: 'Description', type: 'textarea', rows: 7, placeholder: 'Describe your experience with this skill…', maxlength: 1500 }
+            ],
+            title: r => r.name,
+            subtitle: r => r.description,
+            pct: r => r.percentage
+        },
+        languages: {
+            label: 'Languages',
+            singular: 'language',
+            description: 'Language proficiency bars.',
+            fields: [
+                { key: 'name', label: 'Language', required: true, placeholder: 'English language', chips: ['Arabic language', 'English language', 'Japanese language'] },
+                { key: 'percentage', label: 'Proficiency', type: 'percent', required: true }
+            ],
+            title: r => r.name,
+            pct: r => r.percentage
+        }
+    };
+
+    const SCHEMA_SQL = `-- Education table
+CREATE TABLE IF NOT EXISTS education (
+    id INTEGER PRIMARY KEY,
+    graduation_year TEXT,
+    institution TEXT,
+    degree TEXT,
+    description TEXT
+);
+
+-- Career table
+CREATE TABLE IF NOT EXISTS career (
+    id INTEGER PRIMARY KEY,
+    date_range TEXT,
+    company TEXT,
+    position TEXT,
+    location TEXT
+);
+
+-- Skills table
+CREATE TABLE IF NOT EXISTS skills (
+    id INTEGER PRIMARY KEY,
+    name TEXT,
+    percentage INTEGER,
+    description TEXT
+);
+
+-- Language skills table
+CREATE TABLE IF NOT EXISTS languages (
+    id INTEGER PRIMARY KEY,
+    name TEXT,
+    percentage INTEGER
+);`;
+
+    // =====================================================================
+    // State
+    // =====================================================================
+    let SQL, db;
+    let publishedBytes = null;   // the db as loaded from db/resume.db, for "discard draft"
+    let source = '';             // where the current data came from
+    let currentView = 'education';
+
+    const $ = (sel, root = document) => root.querySelector(sel);
+    const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const pad = n => String(n).padStart(2, '0');
+
+    // =====================================================================
+    // Database
+    // =====================================================================
+    function rows(table) {
+        const res = db.exec(`SELECT * FROM ${table} ORDER BY id`);
+        if (!res.length) return [];
+        const { columns, values } = res[0];
+        return values.map(v => Object.fromEntries(columns.map((c, i) => [c, v[i]])));
+    }
+
+    function getRow(table, id) {
+        return rows(table).find(r => r.id === id);
+    }
+
+    function ensureSchema() {
+        db.run(SCHEMA_SQL);
+    }
+
+    function insertRow(table, data, id = null) {
+        const keys = Object.keys(data);
+        const cols = id == null ? keys : ['id', ...keys];
+        const vals = id == null ? keys.map(k => data[k]) : [id, ...keys.map(k => data[k])];
+        db.run(`INSERT INTO ${table} (${cols.join(', ')}) VALUES (${cols.map(() => '?').join(', ')})`, vals);
+    }
+
+    function updateRow(table, id, data) {
+        const keys = Object.keys(data);
+        db.run(`UPDATE ${table} SET ${keys.map(k => `${k} = ?`).join(', ')} WHERE id = ?`, [...keys.map(k => data[k]), id]);
+    }
+
+    function deleteRow(table, id) {
+        db.run(`DELETE FROM ${table} WHERE id = ?`, [id]);
+    }
+
+    // The public page orders by id, so reordering renumbers ids 1..n.
+    function applyOrder(table, orderedIds) {
+        db.run('BEGIN');
+        try {
+            orderedIds.forEach((id, i) => db.run(`UPDATE ${table} SET id = ? WHERE id = ?`, [-(i + 1), id]));
+            db.run(`UPDATE ${table} SET id = -id WHERE id < 0`);
+            db.run('COMMIT');
+        } catch (e) {
+            db.run('ROLLBACK');
+            throw e;
+        }
+    }
+
+    function toBase64(bytes) {
+        let s = '';
+        for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+        return btoa(s);
+    }
+    function fromBase64(b64) {
+        const s = atob(b64);
+        const out = new Uint8Array(s.length);
+        for (let i = 0; i < s.length; i++) out[i] = s.charCodeAt(i);
+        return out;
+    }
+
+    function saveDraft() {
+        try {
+            localStorage.setItem(DRAFT_KEY, toBase64(db.export()));
+            localStorage.setItem(DRAFT_TIME_KEY, new Date().toISOString());
+        } catch (e) {
+            console.error('Could not save draft:', e);
+            toast('Could not auto-save the draft in this browser', 'err');
+        }
+        updateStatus();
+    }
+
+    function readDraft() {
+        try {
+            const b64 = localStorage.getItem(DRAFT_KEY);
+            return b64 ? fromBase64(b64) : null;
+        } catch { return null; }
+    }
+
+    function clearDraft() {
+        try {
+            localStorage.removeItem(DRAFT_KEY);
+            localStorage.removeItem(DRAFT_TIME_KEY);
+        } catch { /* storage unavailable */ }
+    }
+
+    function hasDraft() {
+        try { return !!localStorage.getItem(DRAFT_KEY); } catch { return false; }
+    }
+
+    async function loadPublished() {
+        try {
+            const res = await fetch('db/resume.db', { cache: 'no-store' });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const bytes = new Uint8Array(await res.arrayBuffer());
+            new SQL.Database(bytes).close(); // validate
+            return { bytes, source: 'db/resume.db' };
+        } catch (e) {
+            console.warn('Could not load db/resume.db, trying db/resume.sql', e);
+        }
+        try {
+            const res = await fetch('db/resume.sql', { cache: 'no-store' });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const tmp = new SQL.Database();
+            tmp.run(await res.text());
+            const bytes = tmp.export();
+            tmp.close();
+            return { bytes, source: 'db/resume.sql' };
+        } catch (e) {
+            console.warn('Could not load db/resume.sql either', e);
+        }
+        return null;
+    }
+
+    async function init() {
+        try {
+            SQL = await initSqlJs({ locateFile: f => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${f}` });
+        } catch (e) {
+            console.error(e);
+            $('#content').innerHTML = `<div class="empty"><h3>Could not load the SQL engine</h3><p>Check your internet connection and reload the page.</p><button class="btn btn-primary" onclick="location.reload()">Reload</button></div>`;
+            setStatus('Error', true);
+            return;
+        }
+
+        const published = await loadPublished();
+        publishedBytes = published?.bytes ?? null;
+        const draft = readDraft();
+
+        if (draft) {
+            db = new SQL.Database(draft);
+            source = 'draft';
+        } else if (published) {
+            db = new SQL.Database(published.bytes);
+            source = published.source;
+        } else {
+            db = new SQL.Database();
+            source = 'empty';
+        }
+        ensureSchema();
+
+        renderNav();
+        render();
+        updateStatus();
+    }
+
+    // =====================================================================
+    // Status / chrome
+    // =====================================================================
+    function setStatus(text, dirty) {
+        $('#status-text').textContent = text;
+        $('#status-pill').classList.toggle('dirty', !!dirty);
+    }
+
+    function updateStatus() {
+        if (hasDraft()) {
+            let when = '';
             try {
-                console.log('Initializing SQL.js...');
-                
-                // Load SQL.js
-                SQL = await initSqlJs({
-                    locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}`
-                });
-                
-                console.log('SQL.js loaded successfully');
-                
-                try {
-                    // Fetch the database file
-                    const response = await fetch('db/resume.db');
-                    
-                    if (!response.ok) {
-                        throw new Error(`Failed to fetch database: ${response.status} ${response.statusText}`);
-                    }
-                    
-                    const arrayBuffer = await response.arrayBuffer();
-                    const uInt8Array = new Uint8Array(arrayBuffer);
-                    
-                    // Create a database from the fetched file
-                    db = new SQL.Database(uInt8Array);
-                    console.log('Resume database loaded successfully');
-                    
-                    // Load initial table data
-                    loadTableData('education');
-                } catch (fetchError) {
-                    console.error('Error fetching database:', fetchError);
-                    
-                    // Fallback to creating an in-memory database from SQL script
-                    console.log('Attempting to create in-memory database from SQL script...');
-                    
-                    try {
-                        const sqlResponse = await fetch('db/resume.sql');
-                        
-                        if (!sqlResponse.ok) {
-                            throw new Error(`Failed to fetch SQL script: ${sqlResponse.status} ${sqlResponse.statusText}`);
-                        }
-                        
-                        const sqlScript = await sqlResponse.text();
-                        
-                        // Create an empty database
-                        db = new SQL.Database();
-                        
-                        // Execute the SQL script
-                        db.run(sqlScript);
-                        
-                        console.log('In-memory database created successfully');
-                        
-                        // Load initial table data
-                        loadTableData('education');
-                    } catch (sqlError) {
-                        console.error('Error creating in-memory database:', sqlError);
-                        showError('Error loading database', 'There was an error loading the resume database. Please check the console for more details.');
-                    }
-                }
-            } catch (error) {
-                console.error('Error initializing database:', error);
-                showError('Error initializing database', 'There was an error initializing the database. Please check the console for more details.');
-            }
+                const t = localStorage.getItem(DRAFT_TIME_KEY);
+                if (t) when = ' · saved ' + new Date(t).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            } catch { /* ignore */ }
+            setStatus('Unpublished changes' + when, true);
+        } else {
+            setStatus('In sync with published data', false);
         }
-        
-        // Show error message
-        function showError(title, message) {
-            const container = document.querySelector('.container');
-            const errorDiv = document.createElement('div');
-            errorDiv.className = 'alert alert-danger mt-4';
-            errorDiv.innerHTML = `<h4>${title}</h4><p>${message}</p>`;
-            container.appendChild(errorDiv);
-        }
-        
-        // Load table data
-        function loadTableData(tableName) {
-            try {
-                const result = db.exec(`SELECT * FROM ${tableName}`);
-                const tableContainer = document.getElementById('table-data');
-                
-                if (result.length > 0) {
-                    const columns = result[0].columns;
-                    const values = result[0].values;
-                    
-                    let html = '<table class="table table-striped table-bordered">';
-                    
-                    // Table header
-                    html += '<thead><tr>';
-                    columns.forEach(column => {
-                        html += `<th>${column}</th>`;
-                    });
-                    html += '</tr></thead>';
-                    
-                    // Table body
-                    html += '<tbody>';
-                    values.forEach(row => {
-                        html += '<tr>';
-                        row.forEach(cell => {
-                            html += `<td>${cell}</td>`;
-                        });
-                        html += '</tr>';
-                    });
-                    html += '</tbody></table>';
-                    
-                    tableContainer.innerHTML = html;
-                } else {
-                    tableContainer.innerHTML = `<p>No data found in table ${tableName}</p>`;
-                }
-                
-                // Update current table name
-                document.getElementById('current-table').textContent = tableName.charAt(0).toUpperCase() + tableName.slice(1);
-                
-                // Update active table in list
-                document.querySelectorAll('#table-list a').forEach(item => {
-                    item.classList.remove('active');
-                    if (item.getAttribute('data-table') === tableName) {
-                        item.classList.add('active');
-                    }
-                });
-            } catch (error) {
-                console.error(`Error loading table ${tableName}:`, error);
-                document.getElementById('table-data').innerHTML = `<p class="text-danger">Error: ${error.message}</p>`;
-            }
-        }
-        
-        // Run SQL query
-        function runSqlQuery() {
-            const query = document.getElementById('sql-query').value;
-            const resultContainer = document.getElementById('query-result');
-            const queryData = document.getElementById('query-data');
-            
-            try {
-                const result = db.exec(query);
-                resultContainer.classList.remove('hidden');
-                
-                if (result.length > 0) {
-                    const columns = result[0].columns;
-                    const values = result[0].values;
-                    
-                    let html = '<table class="table table-striped table-bordered">';
-                    
-                    // Table header
-                    html += '<thead><tr>';
-                    columns.forEach(column => {
-                        html += `<th>${column}</th>`;
-                    });
-                    html += '</tr></thead>';
-                    
-                    // Table body
-                    html += '<tbody>';
-                    values.forEach(row => {
-                        html += '<tr>';
-                        row.forEach(cell => {
-                            html += `<td>${cell}</td>`;
-                        });
-                        html += '</tr>';
-                    });
-                    html += '</tbody></table>';
-                    
-                    queryData.innerHTML = html;
-                } else {
-                    queryData.innerHTML = '<p>Query executed successfully. No results returned.</p>';
-                }
-            } catch (error) {
-                console.error('Error executing query:', error);
-                resultContainer.classList.remove('hidden');
-                queryData.innerHTML = `<p class="text-danger">Error: ${error.message}</p>`;
-            }
-        }
-        
-        // Export SQL
-        function exportSql() {
-            try {
-                const tables = ['education', 'career', 'skills', 'languages'];
-                let sql = '-- Resume Database Schema\n\n';
-                
-                // Create tables
-                sql += '-- Education table\n';
-                sql += 'CREATE TABLE IF NOT EXISTS education (\n';
-                sql += '    id INTEGER PRIMARY KEY,\n';
-                sql += '    graduation_year TEXT,\n';
-                sql += '    institution TEXT,\n';
-                sql += '    degree TEXT,\n';
-                sql += '    description TEXT\n';
-                sql += ');\n\n';
-                
-                sql += '-- Career table\n';
-                sql += 'CREATE TABLE IF NOT EXISTS career (\n';
-                sql += '    id INTEGER PRIMARY KEY,\n';
-                sql += '    date_range TEXT,\n';
-                sql += '    company TEXT,\n';
-                sql += '    position TEXT,\n';
-                sql += '    location TEXT\n';
-                sql += ');\n\n';
-                
-                sql += '-- Skills table\n';
-                sql += 'CREATE TABLE IF NOT EXISTS skills (\n';
-                sql += '    id INTEGER PRIMARY KEY,\n';
-                sql += '    name TEXT,\n';
-                sql += '    percentage INTEGER,\n';
-                sql += '    description TEXT\n';
-                sql += ');\n\n';
-                
-                sql += '-- Language skills table\n';
-                sql += 'CREATE TABLE IF NOT EXISTS languages (\n';
-                sql += '    id INTEGER PRIMARY KEY,\n';
-                sql += '    name TEXT,\n';
-                sql += '    percentage INTEGER\n';
-                sql += ');\n\n';
-                
-                // Insert data
-                tables.forEach(table => {
-                    const result = db.exec(`SELECT * FROM ${table}`);
-                    if (result.length > 0) {
-                        const columns = result[0].columns.filter(col => col !== 'id');
-                        const values = result[0].values;
-                        
-                        sql += `-- Insert ${table.charAt(0).toUpperCase() + table.slice(1)} Data\n`;
-                        
-                        values.forEach(row => {
-                            const rowData = row.slice(1); // Skip id column
-                            const escapedValues = rowData.map(val => {
-                                if (val === null) return 'NULL';
-                                if (typeof val === 'string') {
-                                    return `'${val.replace(/'/g, "''")}'`;
-                                }
-                                return val;
-                            });
-                            
-                            sql += `INSERT INTO ${table} (${columns.join(', ')}) VALUES\n`;
-                            sql += `(${escapedValues.join(', ')});\n`;
-                        });
-                        
-                        sql += '\n';
-                    }
-                });
-                
-                document.getElementById('export-data').value = sql;
-                document.getElementById('export-result').classList.remove('hidden');
-                
-                // Set up download link
-                const blob = new Blob([sql], { type: 'text/plain' });
-                const url = URL.createObjectURL(blob);
-                document.getElementById('download-sql').href = url;
-            } catch (error) {
-                console.error('Error exporting SQL:', error);
-                document.getElementById('export-data').value = `Error: ${error.message}`;
-                document.getElementById('export-result').classList.remove('hidden');
-            }
-        }
-        
-        // Event listeners
-        document.addEventListener('DOMContentLoaded', () => {
-            // Initialize SQL.js
-            initSqlJs();
-            
-            // Table list click event
-            document.getElementById('table-list').addEventListener('click', (e) => {
-                if (e.target.hasAttribute('data-table')) {
-                    e.preventDefault();
-                    const tableName = e.target.getAttribute('data-table');
-                    loadTableData(tableName);
-                }
-            });
-            
-            // Refresh button click event
-            document.getElementById('refresh-btn').addEventListener('click', () => {
-                const activeTable = document.querySelector('#table-list a.active').getAttribute('data-table');
-                loadTableData(activeTable);
-            });
-            
-            // Run query button click event
-            document.getElementById('run-query').addEventListener('click', runSqlQuery);
-            
-            // Export SQL button click event
-            document.getElementById('export-sql').addEventListener('click', exportSql);
-            
-            // Copy SQL button click event
-            document.getElementById('copy-sql').addEventListener('click', () => {
-                const sqlText = document.getElementById('export-data');
-                sqlText.select();
-                document.execCommand('copy');
-                alert('SQL copied to clipboard!');
-            });
+    }
+
+    function renderNav() {
+        $('#section-nav').innerHTML = Object.entries(SECTIONS).map(([key, s]) => `
+            <button class="nav-item" data-view="${key}">
+                ${ICONS[key]} ${s.label}
+                <span class="count">${rows(key).length}</span>
+            </button>`).join('');
+        document.querySelectorAll('.nav-item[data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === currentView));
+    }
+
+    function go(view) {
+        currentView = view;
+        $('#sidebar').classList.remove('open');
+        renderNav();
+        render();
+        window.scrollTo({ top: 0 });
+    }
+
+    function afterChange() {
+        saveDraft();
+        renderNav();
+        if (SECTIONS[currentView]) renderSection(currentView);
+    }
+
+    // =====================================================================
+    // Views
+    // =====================================================================
+    function render() {
+        if (SECTIONS[currentView]) renderSection(currentView);
+        else if (currentView === 'publish') renderPublish();
+        else if (currentView === 'sql') renderSql();
+    }
+
+    function draftBanner() {
+        if (!hasDraft()) return '';
+        return `
+        <div class="banner">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span class="grow">You have unpublished changes saved in this browser. Export them to update the live resume.</span>
+            <button class="btn btn-sm" data-action="discard">Discard</button>
+            <button class="btn btn-sm btn-primary" data-action="go-publish">Publish</button>
+        </div>`;
+    }
+
+    function renderSection(table) {
+        const s = SECTIONS[table];
+        const data = rows(table);
+
+        const list = data.length ? `
+            <div class="entries" id="entries">
+                ${data.map((r, i) => `
+                <div class="entry" draggable="true" data-id="${r.id}">
+                    <span class="drag-handle" title="Drag to reorder" aria-hidden="true">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="1.6"/><circle cx="15" cy="5" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="19" r="1.6"/><circle cx="15" cy="19" r="1.6"/></svg>
+                    </span>
+                    <span class="entry-num">${pad(i + 1)}</span>
+                    <div class="entry-body" data-action="edit" data-id="${r.id}" title="Click to edit">
+                        <div class="entry-title">${esc(s.title(r)) || '<span style="color:var(--text-3)">Untitled</span>'}</div>
+                        ${s.subtitle && s.subtitle(r) ? `<div class="entry-sub">${esc(s.subtitle(r))}</div>` : ''}
+                        ${s.meta && s.meta(r) ? `<div class="entry-meta">${esc(s.meta(r))}</div>` : ''}
+                    </div>
+                    ${s.pct ? `
+                    <div class="entry-pct">
+                        <div class="pct-label">${Number(s.pct(r)) || 0}%</div>
+                        <div class="bar"><span style="width:${Math.max(0, Math.min(100, Number(s.pct(r)) || 0))}%"></span></div>
+                    </div>` : ''}
+                    <div class="entry-actions">
+                        <button class="icon-btn" data-action="up" data-id="${r.id}" title="Move up" aria-label="Move up" ${i === 0 ? 'disabled' : ''}>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+                        </button>
+                        <button class="icon-btn" data-action="down" data-id="${r.id}" title="Move down" aria-label="Move down" ${i === data.length - 1 ? 'disabled' : ''}>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                        </button>
+                        <button class="icon-btn" data-action="duplicate" data-id="${r.id}" title="Duplicate" aria-label="Duplicate">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        </button>
+                        <button class="icon-btn" data-action="edit" data-id="${r.id}" title="Edit" aria-label="Edit">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                        </button>
+                        <button class="icon-btn danger" data-action="delete" data-id="${r.id}" title="Delete" aria-label="Delete">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+                        </button>
+                    </div>
+                </div>`).join('')}
+            </div>` : `
+            <div class="empty">
+                <div class="empty-icon">${ICONS[table]}</div>
+                <h3>No ${s.label.toLowerCase()} yet</h3>
+                <p>Add your first ${s.singular} to show it on the resume page.</p>
+                <button class="btn btn-primary" data-action="add">+ Add ${s.singular}</button>
+            </div>`;
+
+        $('#content').innerHTML = `
+            ${draftBanner()}
+            <div class="page-head">
+                <div>
+                    <h1>${s.label}</h1>
+                    <p>${s.description} ${data.length > 1 ? 'Drag to change the order.' : ''}</p>
+                </div>
+                <button class="btn btn-primary" data-action="add" title="Add (N)">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Add ${s.singular}
+                </button>
+            </div>
+            ${list}`;
+
+        bindDragAndDrop(table);
+    }
+
+    function renderPublish() {
+        const counts = Object.keys(SECTIONS).map(k => [k, rows(k).length]);
+        $('#content').innerHTML = `
+            ${hasDraft() ? '' : `<div class="banner info"><span class="grow">Everything matches the published data. You can still export a copy below.</span></div>`}
+            <div class="page-head">
+                <div>
+                    <h1>Publish &amp; Export</h1>
+                    <p>Your site is static, so changes go live once the new database files are committed to the repository.</p>
+                </div>
+            </div>
+
+            <div class="stat-row">
+                ${counts.map(([k, n]) => `<div class="stat"><div class="k">${SECTIONS[k].label}</div><div class="v">${n}</div></div>`).join('')}
+            </div>
+
+            <div class="grid-2">
+                <div class="card">
+                    <h2>1. Download the files</h2>
+                    <p>Download both files so <code>resume.db</code> and <code>resume.sql</code> stay in sync.</p>
+                    <div class="btn-row">
+                        <button class="btn btn-primary" data-action="download-db">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            resume.db
+                        </button>
+                        <button class="btn" data-action="download-sql">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            resume.sql
+                        </button>
+                        <button class="btn btn-ghost" data-action="copy-sql">Copy SQL</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <h2>2. Put them live</h2>
+                    <ol class="steps">
+                        <li><span>Replace the files in the <code>db/</code> folder of the project.</span></li>
+                        <li><span>Run <code>./deploy.sh</code> (or commit and push them).</span></li>
+                        <li><span>Click <strong>Mark as published</strong> to clear the local draft.</span></li>
+                    </ol>
+                    <div class="btn-row" style="margin-top:16px">
+                        <button class="btn" data-action="mark-published" ${hasDraft() ? '' : 'disabled'}>Mark as published</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Preview before publishing</h2>
+                <p>Open the real site with your draft data. It is visible only in this browser.</p>
+                <a class="btn" href="index.html?preview=draft#resumepage" target="_blank" rel="noopener">Open resume preview ↗</a>
+            </div>
+
+            <div class="card">
+                <h2>Generated SQL</h2>
+                <p>This is the content of the <code>resume.sql</code> file.</p>
+                <textarea class="sql-editor mono" style="min-height:300px" readonly id="export-sql">${esc(buildSql())}</textarea>
+            </div>`;
+    }
+
+    function renderSql() {
+        $('#content').innerHTML = `
+            ${draftBanner()}
+            <div class="page-head">
+                <div>
+                    <h1>SQL Console</h1>
+                    <p>For advanced edits. Changes made here are saved to the draft just like form edits.</p>
+                </div>
+            </div>
+            <div class="card">
+                <textarea class="sql-editor" id="sql-query" spellcheck="false">SELECT * FROM education;</textarea>
+                <div class="btn-row" style="margin-top:12px;align-items:center">
+                    <button class="btn btn-primary" data-action="run-sql">Run query</button>
+                    ${Object.keys(SECTIONS).map(t => `<button class="chip" data-action="sql-preset" data-table="${t}">${t}</button>`).join('')}
+                    <span style="margin-left:auto;color:var(--text-3);font-size:12px"><kbd>Ctrl</kbd> + <kbd>Enter</kbd> to run</span>
+                </div>
+                <div id="sql-result"></div>
+            </div>`;
+        $('#sql-query').addEventListener('keydown', e => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); runSql(); }
         });
-    </script>
+    }
+
+    function runSql() {
+        const query = $('#sql-query').value.trim();
+        const out = $('#sql-result');
+        if (!query) return;
+        const before = toBase64(db.export());
+        try {
+            const results = db.exec(query);
+            const changed = toBase64(db.export()) !== before;
+            let html = '';
+            results.forEach(r => {
+                html += `<div class="table-wrap"><table><thead><tr>${r.columns.map(c => `<th>${esc(c)}</th>`).join('')}</tr></thead>
+                    <tbody>${r.values.map(v => `<tr>${v.map(c => `<td title="${esc(c)}">${c === null ? '<span style="color:var(--text-3)">NULL</span>' : esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+            });
+            if (!results.length) html = `<div class="result-msg ok">Query ran successfully${changed ? ' — changes saved to draft.' : '.'}</div>`;
+            out.innerHTML = html;
+            if (changed) { saveDraft(); renderNav(); }
+        } catch (e) {
+            out.innerHTML = `<div class="result-msg err">${esc(e.message)}</div>`;
+        }
+    }
+
+    // =====================================================================
+    // Export
+    // =====================================================================
+    function sqlValue(v) {
+        if (v === null || v === undefined) return 'NULL';
+        if (typeof v === 'number') return String(v);
+        return `'${String(v).replace(/'/g, "''")}'`;
+    }
+
+    function buildSql() {
+        let sql = '-- Resume Database Schema\n';
+        sql += `-- Generated by admin.html on ${new Date().toISOString().slice(0, 10)}\n\n`;
+        sql += '-- Drop existing tables if they exist\n';
+        sql += Object.keys(SECTIONS).map(t => `DROP TABLE IF EXISTS ${t};`).join('\n') + '\n\n';
+        sql += SCHEMA_SQL + '\n';
+        const titles = { education: 'Education', career: 'Career', skills: 'Skills', languages: 'Language Skills' };
+        Object.keys(SECTIONS).forEach(t => {
+            const data = rows(t);
+            if (!data.length) return;
+            const cols = Object.keys(data[0]).filter(c => c !== 'id');
+            sql += `\n-- Insert ${titles[t]} Data\n`;
+            sql += `INSERT INTO ${t} (${cols.join(', ')}) VALUES\n`;
+            sql += data.map(r => `(${cols.map(c => sqlValue(r[c])).join(', ')})`).join(',\n') + ';\n';
+        });
+        return sql;
+    }
+
+    function download(name, data, type) {
+        const url = URL.createObjectURL(new Blob([data], { type }));
+        const a = Object.assign(document.createElement('a'), { href: url, download: name });
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    // =====================================================================
+    // Import
+    // =====================================================================
+    async function importFile(file) {
+        try {
+            let next;
+            if (/\.sql$/i.test(file.name)) {
+                next = new SQL.Database();
+                next.run(await file.text());
+            } else {
+                next = new SQL.Database(new Uint8Array(await file.arrayBuffer()));
+                next.exec('SELECT name FROM sqlite_master'); // throws if not a SQLite file
+            }
+            const ok = await confirmDialog({
+                title: 'Replace current data?',
+                text: `All resume data in the editor will be replaced with the contents of “${file.name}”.`,
+                ok: 'Replace data'
+            });
+            if (!ok) { next.close(); return; }
+            db.close();
+            db = next;
+            ensureSchema();
+            saveDraft();
+            renderNav();
+            render();
+            toast(`Imported ${file.name}`);
+        } catch (e) {
+            console.error(e);
+            toast('That file is not a valid resume database', 'err');
+        }
+    }
+
+    // =====================================================================
+    // Editor drawer
+    // =====================================================================
+    const editor = $('#editor');
+    let editing = null; // { table, id|null }
+
+    function fieldHtml(f, value) {
+        const id = `f-${f.key}`;
+        const req = f.required ? ' <span class="req">*</span>' : '';
+        const err = `<div class="error">${f.label} is required.</div>`;
+        const help = f.help ? `<div class="help">${f.help}</div>` : '';
+        const chips = f.chips ? `<div class="chips">${f.chips.map(c => `<button type="button" class="chip" data-chip="${esc(c)}" data-for="${id}">${esc(c)}</button>`).join('')}</div>` : '';
+
+        if (f.type === 'percent') {
+            const v = value ?? 50;
+            return `<div class="field" data-key="${f.key}">
+                <label for="${id}">${f.label}${req}</label>
+                <div class="range-row">
+                    <input type="range" min="0" max="100" step="5" value="${esc(v)}" data-sync="${id}" aria-label="${f.label} slider">
+                    <input class="input" type="number" min="0" max="100" id="${id}" name="${f.key}" value="${esc(v)}">
+                </div>
+                <div class="chips">${[25, 50, 75, 90, 100].map(n => `<button type="button" class="chip" data-chip="${n}" data-for="${id}">${n}%</button>`).join('')}</div>
+                <div class="error">Enter a number between 0 and 100.</div>
+            </div>`;
+        }
+        if (f.type === 'textarea') {
+            return `<div class="field" data-key="${f.key}">
+                <label for="${id}">${f.label}${req}${f.maxlength ? `<span class="counter" data-counter="${id}"></span>` : ''}</label>
+                <textarea class="input" id="${id}" name="${f.key}" rows="${f.rows || 4}" placeholder="${esc(f.placeholder || '')}" ${f.maxlength ? `maxlength="${f.maxlength}"` : ''}>${esc(value ?? '')}</textarea>
+                ${chips}${help}${err}
+            </div>`;
+        }
+        return `<div class="field" data-key="${f.key}">
+            <label for="${id}">${f.label}${req}</label>
+            <input class="input" type="text" id="${id}" name="${f.key}" value="${esc(value ?? '')}" placeholder="${esc(f.placeholder || '')}" autocomplete="off">
+            ${chips}${help}${err}
+        </div>`;
+    }
+
+    function openEditor(table, id = null, prefill = null) {
+        const s = SECTIONS[table];
+        const row = id != null ? getRow(table, id) : prefill;
+        editing = { table, id };
+        $('#editor-title').textContent = id != null ? `Edit ${s.singular}` : `Add ${s.singular}`;
+        $('#editor-submit').textContent = id != null ? 'Save changes' : `Add ${s.singular}`;
+        $('#editor-fields').innerHTML = s.fields.map(f => fieldHtml(f, row ? row[f.key] : undefined)).join('');
+        editor.dataset.dirty = '';
+        updatePreview();
+        updateCounters();
+        editor.showModal();
+        setTimeout(() => $('#editor-fields .input')?.focus(), 30);
+    }
+
+    function readForm() {
+        const s = SECTIONS[editing.table];
+        const data = {};
+        s.fields.forEach(f => {
+            const raw = $(`#f-${f.key}`).value;
+            data[f.key] = f.type === 'percent' ? (raw === '' ? null : Number(raw)) : raw.trim();
+        });
+        return data;
+    }
+
+    function validate() {
+        const s = SECTIONS[editing.table];
+        let firstBad = null;
+        s.fields.forEach(f => {
+            const el = $(`#f-${f.key}`);
+            const wrap = el.closest('.field');
+            let bad = false;
+            if (f.type === 'percent') {
+                const n = Number(el.value);
+                bad = el.value === '' || !Number.isFinite(n) || n < 0 || n > 100;
+            } else {
+                bad = f.required && !el.value.trim();
+            }
+            wrap.classList.toggle('invalid', bad);
+            if (bad && !firstBad) firstBad = el;
+        });
+        if (firstBad) firstBad.focus();
+        return !firstBad;
+    }
+
+    function updateCounters() {
+        document.querySelectorAll('[data-counter]').forEach(c => {
+            const el = document.getElementById(c.dataset.counter);
+            c.textContent = `${el.value.length} / ${el.maxLength}`;
+        });
+    }
+
+    function updatePreview() {
+        const t = editing.table;
+        const d = readForm();
+        const ph = (v, p) => v ? esc(v) : `<span class="muted">${esc(p)}</span>`;
+        const index = editing.id != null
+            ? rows(t).findIndex(r => r.id === editing.id) + 1
+            : rows(t).length + 1;
+        let html = '';
+        if (t === 'education') {
+            html = `<div class="pv-item">
+                <div class="pv-numb"><span class="pv-bulet">${pad(index)}</span><span class="pv-date">${ph(d.graduation_year, 'Date')}</span></div>
+                <div class="pv-detail"><h3>${ph(d.institution, 'Institution')}</h3><p>${d.degree || d.description ? esc([d.degree, d.description].filter(Boolean).join(', ')) : '<span class="muted">Degree, specialization</span>'}</p></div>
+            </div>`;
+        } else if (t === 'career') {
+            html = `<div class="pv-item">
+                <div class="pv-numb"><span class="pv-bulet">${pad(index)}</span><span class="pv-date">${ph(d.date_range, 'Date range')}</span></div>
+                <div class="pv-detail"><h3>${ph(d.company, 'Company')}</h3><p>${ph(d.position, 'Position')}</p>${d.location ? `<p>${esc(d.location)}</p>` : ''}</div>
+            </div>`;
+        } else if (t === 'skills') {
+            const p = Math.max(0, Math.min(100, Number(d.percentage) || 0));
+            html = `<div class="pv-skill">
+                <div class="pv-ring" style="--p:${p}" data-label="${p}%"></div>
+                <div><p class="t">${ph(d.name, 'Skill name')}</p><p class="d">${ph(d.description, 'Description')}</p></div>
+            </div>`;
+        } else if (t === 'languages') {
+            const p = Math.max(0, Math.min(100, Number(d.percentage) || 0));
+            html = `<div class="pv-lang"><p class="n">${ph(d.name, 'Language')} <span style="float:right;color:rgba(255,255,255,.5)">${p}%</span></p><div class="b"><span style="width:${p}%"></span></div></div>`;
+        }
+        $('#editor-preview').innerHTML = html;
+    }
+
+    async function closeEditor() {
+        if (editor.dataset.dirty) {
+            const ok = await confirmDialog({ title: 'Discard changes?', text: 'You have unsaved changes in this form.', ok: 'Discard' });
+            if (!ok) return;
+        }
+        editor.close();
+    }
+
+    function submitEditor(e) {
+        e?.preventDefault();
+        if (!validate()) return;
+        const data = readForm();
+        const { table, id } = editing;
+        try {
+            if (id != null) {
+                updateRow(table, id, data);
+                toast('Changes saved');
+            } else {
+                insertRow(table, data);
+                toast(`${SECTIONS[table].label.replace(/s$/, '')} added`);
+            }
+            editor.dataset.dirty = '';
+            editor.close();
+            afterChange();
+        } catch (err) {
+            console.error(err);
+            toast('Could not save: ' + err.message, 'err');
+        }
+    }
+
+    // =====================================================================
+    // Confirm dialog & toasts
+    // =====================================================================
+    function confirmDialog({ title, text, ok = 'Confirm' }) {
+        const dlg = $('#confirm');
+        $('#confirm-title').textContent = title;
+        $('#confirm-text').textContent = text;
+        $('#confirm-ok').textContent = ok;
+        dlg.showModal();
+        $('#confirm-cancel').focus();
+        return new Promise(resolve => {
+            const done = v => {
+                dlg.close();
+                $('#confirm-ok').onclick = $('#confirm-cancel').onclick = dlg.oncancel = null;
+                resolve(v);
+            };
+            $('#confirm-ok').onclick = () => done(true);
+            $('#confirm-cancel').onclick = () => done(false);
+            dlg.oncancel = ev => { ev.preventDefault(); done(false); };
+        });
+    }
+
+    function toast(msg, type = 'ok', undo = null) {
+        const el = document.createElement('div');
+        el.className = `toast ${type === 'err' ? 'err' : ''}`;
+        el.innerHTML = `<span class="ic">${type === 'err'
+            ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
+            : '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>'}</span><span>${esc(msg)}</span>`;
+        if (undo) {
+            const b = document.createElement('button');
+            b.className = 'undo';
+            b.textContent = 'Undo';
+            b.onclick = () => { undo(); el.remove(); };
+            el.appendChild(b);
+        }
+        $('#toasts').appendChild(el);
+        setTimeout(() => el.remove(), undo ? 6000 : 3000);
+    }
+
+    // =====================================================================
+    // Drag & drop reordering
+    // =====================================================================
+    function bindDragAndDrop(table) {
+        const list = $('#entries');
+        if (!list) return;
+        let dragId = null;
+
+        list.addEventListener('dragstart', e => {
+            const item = e.target.closest('.entry');
+            if (!item) return;
+            dragId = Number(item.dataset.id);
+            item.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', String(dragId));
+        });
+        list.addEventListener('dragend', () => {
+            list.querySelectorAll('.entry').forEach(el => el.classList.remove('dragging', 'drop-before', 'drop-after'));
+        });
+        list.addEventListener('dragover', e => {
+            const item = e.target.closest('.entry');
+            if (!item || dragId == null) return;
+            e.preventDefault();
+            const before = e.clientY < item.getBoundingClientRect().top + item.offsetHeight / 2;
+            list.querySelectorAll('.entry').forEach(el => el.classList.remove('drop-before', 'drop-after'));
+            if (Number(item.dataset.id) !== dragId) item.classList.add(before ? 'drop-before' : 'drop-after');
+        });
+        list.addEventListener('drop', e => {
+            const item = e.target.closest('.entry');
+            if (!item || dragId == null) return;
+            e.preventDefault();
+            const targetId = Number(item.dataset.id);
+            const before = item.classList.contains('drop-before');
+            dragId = (dragId === targetId) ? null : dragId;
+            if (dragId == null) return;
+            const ids = rows(table).map(r => r.id).filter(id => id !== dragId);
+            const at = ids.indexOf(targetId) + (before ? 0 : 1);
+            ids.splice(at, 0, dragId);
+            applyOrder(table, ids);
+            dragId = null;
+            afterChange();
+        });
+    }
+
+    function move(table, id, dir) {
+        const ids = rows(table).map(r => r.id);
+        const i = ids.indexOf(id);
+        const j = i + dir;
+        if (i < 0 || j < 0 || j >= ids.length) return;
+        [ids[i], ids[j]] = [ids[j], ids[i]];
+        applyOrder(table, ids);
+        afterChange();
+    }
+
+    // =====================================================================
+    // Events
+    // =====================================================================
+    document.addEventListener('click', async e => {
+        const nav = e.target.closest('.nav-item[data-view]');
+        if (nav) { go(nav.dataset.view); return; }
+
+        const btn = e.target.closest('[data-action]');
+        if (!btn || btn.disabled) return;
+        const action = btn.dataset.action;
+        const id = btn.dataset.id != null ? Number(btn.dataset.id) : null;
+        const table = currentView;
+
+        switch (action) {
+            case 'add': openEditor(table); break;
+            case 'edit': openEditor(table, id); break;
+            case 'duplicate': {
+                const { id: _, ...copy } = getRow(table, id);
+                openEditor(table, null, copy);
+                break;
+            }
+            case 'up': move(table, id, -1); break;
+            case 'down': move(table, id, 1); break;
+            case 'delete': {
+                const s = SECTIONS[table];
+                const row = getRow(table, id);
+                const ok = await confirmDialog({
+                    title: `Delete this ${s.singular}?`,
+                    text: `“${s.title(row) || 'Untitled'}” will be removed from your resume.`,
+                    ok: 'Delete'
+                });
+                if (!ok) return;
+                const order = rows(table).map(r => r.id);
+                deleteRow(table, id);
+                afterChange();
+                toast('Entry deleted', 'ok', () => {
+                    const { id: rid, ...data } = row;
+                    insertRow(table, data, rid);
+                    applyOrder(table, order);
+                    afterChange();
+                });
+                break;
+            }
+            case 'go-publish': go('publish'); break;
+            case 'discard': {
+                const ok = await confirmDialog({
+                    title: 'Discard unpublished changes?',
+                    text: 'The editor will go back to the data currently published in db/resume.db. This cannot be undone.',
+                    ok: 'Discard changes'
+                });
+                if (!ok) return;
+                clearDraft();
+                db.close();
+                db = publishedBytes ? new SQL.Database(publishedBytes) : new SQL.Database();
+                ensureSchema();
+                renderNav(); render(); updateStatus();
+                toast('Changes discarded');
+                break;
+            }
+            case 'download-db':
+                download('resume.db', db.export(), 'application/x-sqlite3');
+                toast('resume.db downloaded');
+                break;
+            case 'download-sql':
+                download('resume.sql', buildSql(), 'text/plain');
+                toast('resume.sql downloaded');
+                break;
+            case 'copy-sql':
+                try { await navigator.clipboard.writeText(buildSql()); toast('SQL copied to clipboard'); }
+                catch { toast('Copy failed — select the text below instead', 'err'); }
+                break;
+            case 'mark-published': {
+                const ok = await confirmDialog({
+                    title: 'Mark as published?',
+                    text: 'Only do this after the downloaded files are in the db/ folder. The local draft will be cleared.',
+                    ok: 'Mark as published'
+                });
+                if (!ok) return;
+                publishedBytes = db.export();
+                clearDraft();
+                updateStatus(); render();
+                toast('Draft cleared — you are in sync');
+                break;
+            }
+            case 'run-sql': runSql(); break;
+            case 'sql-preset':
+                $('#sql-query').value = `SELECT * FROM ${btn.dataset.table};`;
+                runSql();
+                break;
+        }
+    });
+
+    // Editor events
+    $('#editor-form').addEventListener('submit', submitEditor);
+    editor.addEventListener('click', e => {
+        if (e.target.closest('[data-close]')) { closeEditor(); return; }
+        if (e.target === editor) closeEditor(); // backdrop click
+        const chip = e.target.closest('[data-chip]');
+        if (chip) {
+            const input = document.getElementById(chip.dataset.for);
+            input.value = chip.dataset.chip;
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+            input.focus();
+        }
+    });
+    editor.addEventListener('cancel', e => { e.preventDefault(); closeEditor(); });
+    editor.addEventListener('input', e => {
+        editor.dataset.dirty = '1';
+        if (e.target.dataset.sync) {
+            document.getElementById(e.target.dataset.sync).value = e.target.value;
+        } else if (e.target.type === 'number') {
+            const range = editor.querySelector(`[data-sync="${e.target.id}"]`);
+            if (range) range.value = e.target.value;
+        }
+        e.target.closest('.field')?.classList.remove('invalid');
+        updatePreview();
+        updateCounters();
+    });
+    editor.addEventListener('keydown', e => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') submitEditor(e);
+    });
+
+    // Global shortcuts
+    document.addEventListener('keydown', e => {
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+            e.preventDefault();
+            if (!editor.open) go('publish');
+            return;
+        }
+        const typing = /INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName);
+        if (!typing && !editor.open && !$('#confirm').open && e.key.toLowerCase() === 'n' && !e.metaKey && !e.ctrlKey && SECTIONS[currentView]) {
+            e.preventDefault();
+            openEditor(currentView);
+        }
+    });
+
+    // Top bar
+    $('#publish-btn').addEventListener('click', () => go('publish'));
+    $('#import-btn').addEventListener('click', () => $('#import-file').click());
+    $('#import-file').addEventListener('change', e => {
+        const f = e.target.files[0];
+        if (f) importFile(f);
+        e.target.value = '';
+    });
+    $('#menu-btn').addEventListener('click', () => $('#sidebar').classList.toggle('open'));
+
+    // Theme
+    function applyTheme(t) { document.documentElement.dataset.theme = t; }
+    let theme;
+    try { theme = localStorage.getItem(THEME_KEY); } catch { /* ignore */ }
+    applyTheme(theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+    $('#theme-toggle').addEventListener('click', () => {
+        const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+        applyTheme(next);
+        try { localStorage.setItem(THEME_KEY, next); } catch { /* ignore */ }
+    });
+
+    // Warn before leaving with an open, modified form
+    window.addEventListener('beforeunload', e => {
+        if (editor.open && editor.dataset.dirty) { e.preventDefault(); e.returnValue = ''; }
+    });
+
+    init();
+})();
+</script>
 </body>
-</html> 
+</html>
