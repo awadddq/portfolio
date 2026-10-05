@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" width="1200" height="900"><defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0b0e18"/><stop offset="1" stop-color="#1d1028"/></linearGradient>
+<radialGradient id="glow"><stop offset="0" stop-color="#ff5e15" stop-opacity=".45"/><stop offset="1" stop-color="#ff5e15" stop-opacity="0"/></radialGradient>
+<linearGradient id="area" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff7a2f" stop-opacity=".45"/><stop offset="1" stop-color="#ff7a2f" stop-opacity="0"/></linearGradient></defs>
+<rect width="1200" height="900" fill="url(#bg)"/>
+<circle cx="980" cy="120" r="420" fill="url(#glow)"/>
+<g transform="translate(0,20)">
+<rect x="100" y="120" width="1000" height="640" rx="28" fill="#11131b" stroke="#2a2d3a"/>
+<circle cx="140" cy="160" r="7" fill="#ff5f57"/><circle cx="164" cy="160" r="7" fill="#febc2e"/><circle cx="188" cy="160" r="7" fill="#28c840"/>
+<text x="230" y="167" font-family="Arial, sans-serif" font-size="20" fill="#8b90a3">FleetPulse · Live telemetry</text>
+<rect x="130" y="210" width="520" height="370" rx="18" fill="#171a24"/>
+<text x="160" y="255" font-family="Arial, sans-serif" font-size="18" fill="#8b90a3">Messages / sec</text>
+<text x="160" y="300" font-family="Arial, sans-serif" font-size="40" font-weight="700" fill="#fff">48.2k</text>
+<path d="M150,560 L150,472 L180,426 L211,412 L242,369 L272,362 L302,395 L333,380 L364,414 L394,411 L424,452 L455,434 L486,413 L516,393 L546,384 L577,347 L577,560 Z" fill="url(#area)"/>
+<polyline points="150,472 180,426 211,412 242,369 272,362 302,395 333,380 364,414 394,411 424,452 455,434 486,413 516,393 546,384 577,347" fill="none" stroke="#ff7a2f" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="680" y="210" width="390" height="200" rx="18" fill="#171a24"/>
+<text x="708" y="250" font-family="Arial, sans-serif" font-size="18" fill="#8b90a3">Devices online</text>
+<rect x="708" y="290" width="12" height="40" rx="3" fill="#ff9a3c" opacity=".85"/><rect x="730" y="268" width="12" height="62" rx="3" fill="#ff9a3c" opacity=".85"/><rect x="752" y="282" width="12" height="48" rx="3" fill="#ff9a3c" opacity=".85"/><rect x="774" y="250" width="12" height="80" rx="3" fill="#ff9a3c" opacity=".85"/><rect x="796" y="260" width="12" height="70" rx="3" fill="#ff9a3c" opacity=".85"/><rect x="818" y="234" width="12" height="96" rx="3" fill="#ff9a3c" opacity=".85"/><rect x="840" y="272" width="12" height="58" rx="3" fill="#ff9a3c" opacity=".85"/><rect x="862" y="242" width="12" height="88" rx="3" fill="#ff9a3c" opacity=".85"/><rect x="884" y="220" width="12" height="110" rx="3" fill="#ff9a3c" opacity=".85"/><rect x="906" y="254" width="12" height="76" rx="3" fill="#ff9a3c" opacity=".85"/><rect x="928" y="238" width="12" height="92" rx="3" fill="#ff9a3c" opacity=".85"/><rect x="950" y="210" width="12" height="120" rx="3" fill="#ff9a3c" opacity=".85"/><rect x="972" y="226" width="12" height="104" rx="3" fill="#ff9a3c" opacity=".85"/>
+<rect x="680" y="430" width="390" height="230" rx="18" fill="#171a24"/>
+<path d="M700 600 C760 520 820 640 900 560 S1020 500 1050 540" stroke="#2a2d3a" stroke-width="2" fill="none"/>
+<path d="M700 520 C780 470 850 560 940 480 S1030 470 1050 470" stroke="#2a2d3a" stroke-width="2" fill="none"/>
+<circle cx="735" cy="531" r="4" fill="#ff7a2f" opacity="1"/><circle cx="917" cy="485" r="6" fill="#ff7a2f" opacity="0.5"/><circle cx="814" cy="631" r="6" fill="#ff7a2f" opacity="1"/><circle cx="731" cy="617" r="6" fill="#ff7a2f" opacity="0.7"/><circle cx="725" cy="526" r="4" fill="#ff7a2f" opacity="1"/><circle cx="768" cy="544" r="5" fill="#ff7a2f" opacity="0.5"/><circle cx="976" cy="500" r="6" fill="#ff7a2f" opacity="0.7"/><circle cx="986" cy="516" r="4" fill="#ff7a2f" opacity="1"/><circle cx="992" cy="633" r="4" fill="#ff7a2f" opacity="0.7"/><circle cx="749" cy="610" r="6" fill="#ff7a2f" opacity="0.5"/><circle cx="988" cy="485" r="6" fill="#ff7a2f" opacity="0.5"/><circle cx="954" cy="606" r="5" fill="#ff7a2f" opacity="0.7"/><circle cx="938" cy="619" r="5" fill="#ff7a2f" opacity="0.7"/><circle cx="853" cy="533" r="4" fill="#ff7a2f" opacity="1"/><circle cx="824" cy="490" r="6" fill="#ff7a2f" opacity="0.7"/><circle cx="968" cy="596" r="5" fill="#ff7a2f" opacity="1"/><circle cx="929" cy="543" r="6" fill="#ff7a2f" opacity="0.5"/><circle cx="760" cy="601" r="5" fill="#ff7a2f" opacity="0.5"/><circle cx="875" cy="508" r="5" fill="#ff7a2f" opacity="0.7"/><circle cx="720" cy="489" r="6" fill="#ff7a2f" opacity="1"/><circle cx="860" cy="557" r="6" fill="#ff7a2f" opacity="0.7"/><circle cx="1004" cy="597" r="6" fill="#ff7a2f" opacity="0.7"/>
+<rect x="130" y="600" width="250" height="130" rx="18" fill="#171a24"/>
+<text x="160" y="645" font-family="Arial, sans-serif" font-size="18" fill="#8b90a3">Uptime</text>
+<text x="160" y="700" font-family="Arial, sans-serif" font-size="40" font-weight="700" fill="#fff">99.98%</text>
+<rect x="400" y="600" width="250" height="130" rx="18" fill="#171a24"/>
+<text x="430" y="645" font-family="Arial, sans-serif" font-size="18" fill="#8b90a3">Alerts</text>
+<text x="430" y="700" font-family="Arial, sans-serif" font-size="40" font-weight="700" fill="#ff7a2f">3</text>
+<rect x="680" y="680" width="390" height="50" rx="14" fill="#ff5e15" opacity=".15"/>
+<text x="705" y="712" font-family="Arial, sans-serif" font-size="18" fill="#ffb185">● Streaming from 12,480 sensors</text>
+</g></svg>

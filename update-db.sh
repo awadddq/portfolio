@@ -14,6 +14,8 @@ if [ $? -eq 0 ]; then
     
     # Display the number of rows in each table
     echo "Number of rows in each table:"
+    echo "Works:"
+    sqlite3 db/resume.db "SELECT COUNT(*) FROM works;"
     echo "Education:"
     sqlite3 db/resume.db "SELECT COUNT(*) FROM education;"
     echo "Career:"

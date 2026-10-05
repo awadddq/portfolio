@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
-    <title>Resume Admin</title>
+    <title>Portfolio Admin</title>
     <link rel="shortcut icon" href="image/asset/favicon.ico" type="image/x-icon" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -204,6 +204,22 @@
         .bar > span { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); border-radius: inherit; }
         .entry-pct .pct-label { font-size: 12px; font-weight: 600; color: var(--text-2); margin-bottom: 4px; text-align: right; }
         .entry-actions { display: flex; gap: 2px; }
+        .entry-thumb {
+            width: 64px; height: 48px; border-radius: var(--radius-sm); overflow: hidden; flex-shrink: 0;
+            background: var(--surface-2); display: grid; place-items: center; color: var(--text-3);
+        }
+        .entry-thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* Image field */
+        .img-field { display: flex; gap: 14px; align-items: flex-start; }
+        .img-thumb {
+            width: 140px; aspect-ratio: 4 / 3; border-radius: var(--radius-sm); overflow: hidden; flex-shrink: 0;
+            background: var(--surface-2); border: 1px dashed var(--border);
+            display: grid; place-items: center; color: var(--text-3); font-size: 12px; text-align: center;
+        }
+        .img-thumb img { width: 100%; height: 100%; object-fit: cover; }
+        .img-controls { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+        .img-size { font-size: 12px; color: var(--text-3); }
 
         .empty {
             text-align: center; padding: 56px 20px;
@@ -239,7 +255,7 @@
         code, .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12.5px; }
         code { background: var(--surface-2); padding: 1px 6px; border-radius: 5px; }
         .btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
-        .stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
+        .stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 16px; }
         .stat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; }
         .stat .k { font-size: 12px; color: var(--text-3); font-weight: 500; }
         .stat .v { font-size: 22px; font-weight: 700; }
@@ -265,7 +281,7 @@
         dialog { border: 0; padding: 0; color: var(--text); background: var(--surface); }
         dialog::backdrop { background: rgba(16, 24, 40, .45); backdrop-filter: blur(2px); }
         .drawer {
-            margin: 0 0 0 auto; height: 100vh; max-height: 100vh; width: min(560px, 100vw);
+            margin: 0 0 0 auto; height: 100vh; height: 100dvh; max-height: 100vh; max-height: 100dvh; width: min(560px, 100vw);
             box-shadow: var(--shadow-lg);
         }
         .drawer[open] { animation: slideIn .22s cubic-bezier(.2, .8, .2, 1); }
@@ -330,6 +346,15 @@
         .pv-lang .b { height: 4px; background: rgba(255, 255, 255, .1); }
         .pv-lang .b span { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); transition: width .25s; }
         .muted { color: rgba(255, 255, 255, .3) !important; font-style: italic; }
+        .pv-work { display: grid; gap: 12px; max-width: 360px; }
+        .pv-work .media { position: relative; aspect-ratio: 4 / 3; border-radius: 14px; overflow: hidden; background: #1c1c21; display: grid; place-items: center; color: rgba(255, 255, 255, .3); }
+        .pv-work .media img { width: 100%; height: 100%; object-fit: cover; }
+        .pv-work .cat { position: absolute; top: 10px; left: 10px; padding: 4px 10px; border-radius: 999px; background: rgba(0, 0, 0, .6); font-size: 11px; font-weight: 600; }
+        .pv-work .meta { font-size: 12px; color: rgba(255, 255, 255, .45); }
+        .pv-work h3 { margin: 0; font-size: 18px; font-weight: 600; }
+        .pv-work p { margin: 0; color: rgba(255, 255, 255, .6); font-size: 13px; }
+        .pv-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+        .pv-tags span { font-size: 11px; padding: 3px 9px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .14); color: rgba(255, 255, 255, .65); }
 
         /* ---------- Confirm dialog ---------- */
         .modal { width: min(420px, calc(100vw - 32px)); border-radius: var(--radius); box-shadow: var(--shadow-lg); }
@@ -368,7 +393,7 @@
             .menu-btn { display: grid; }
             .topbar { padding: 12px 16px; }
             .content { padding: 20px 16px 60px; }
-            .grid-2, .stat-row { grid-template-columns: 1fr 1fr; }
+            .grid-2 { grid-template-columns: 1fr 1fr; }
             .entry-pct { width: 90px; }
             .topbar .btn-label { display: none; }
         }
@@ -382,6 +407,8 @@
             .status-pill { white-space: nowrap; min-width: 0; overflow: hidden; }
             .drag-handle { display: none; }
             .pv-item { flex-direction: column; gap: 8px; }
+            .img-field { flex-direction: column; }
+            .img-thumb { width: 100%; }
         }
     </style>
 </head>
@@ -390,14 +417,14 @@
     <!-- ================= SIDEBAR ================= -->
     <aside class="sidebar" id="sidebar">
         <div class="brand">
-            <div class="brand-logo">R</div>
+            <div class="brand-logo">A</div>
             <div>
-                <div class="brand-title">Resume Admin</div>
+                <div class="brand-title">Portfolio Admin</div>
                 <div class="brand-sub">Content manager</div>
             </div>
         </div>
 
-        <div class="nav-label">Resume sections</div>
+        <div class="nav-label">Content</div>
         <nav id="section-nav"></nav>
 
         <div class="nav-label">Tools</div>
@@ -411,7 +438,7 @@
         </button>
 
         <div class="sidebar-footer">
-            <a class="btn btn-block" href="index.html?preview=draft#resumepage" target="_blank" rel="noopener">
+            <a class="btn btn-block" id="preview-link" href="index.html?preview=draft#work" target="_blank" rel="noopener">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                 Preview on site
             </a>
@@ -459,7 +486,7 @@
         <div class="drawer-body">
             <div id="editor-fields" style="display:flex;flex-direction:column;gap:18px"></div>
             <div>
-                <div class="preview-label">Live preview — how it appears on your resume</div>
+                <div class="preview-label">Live preview — how it appears on your site</div>
                 <div class="preview" id="editor-preview"></div>
             </div>
         </div>
@@ -503,13 +530,38 @@
     const THEME_KEY = 'resumeAdmin.theme';
 
     const ICONS = {
+        works: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>',
         education: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></svg>',
         career: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>',
         skills: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
         languages: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>'
     };
 
+    const WORK_CATEGORIES = ['Web App', 'Mobile', 'IoT', 'Embedded', 'UI/UX'];
+    const SAMPLE_COVERS = ['image/works/fleetpulse.svg', 'image/works/sakura-lingo.svg', 'image/works/edge-node.svg', 'image/works/insight.svg', 'image/works/kumo.svg', 'image/works/helios.svg'];
+
     const SECTIONS = {
+        works: {
+            label: 'Work',
+            singular: 'project',
+            description: 'Projects on the “Work” page. The first three are also featured on the home page.',
+            fields: [
+                { key: 'title', label: 'Project title', required: true, placeholder: 'FleetPulse — IoT Telemetry Platform' },
+                { key: 'category', label: 'Category', required: true, placeholder: 'IoT', help: 'Used for the filter buttons on the Work page.', chips: () => [...new Set([...rows('works').map(r => r.category).filter(Boolean), ...WORK_CATEGORIES])] },
+                { key: 'year', label: 'Year', placeholder: String(new Date().getFullYear()), chips: [String(new Date().getFullYear()), String(new Date().getFullYear() - 1)] },
+                { key: 'role', label: 'Your role', placeholder: 'Lead developer' },
+                { key: 'image', label: 'Cover image', type: 'image', placeholder: 'image/works/my-project.jpg or https://…', help: 'Use a path inside the project (e.g. <code>image/works/name.jpg</code>), an image URL, or upload one. Uploads are resized and stored inside the database — for many large images, prefer adding the files to <code>image/works/</code>. 4:3 images look best.', chips: SAMPLE_COVERS },
+                { key: 'summary', label: 'Short summary', type: 'textarea', rows: 2, required: true, maxlength: 200, placeholder: 'One or two sentences shown on the project card.' },
+                { key: 'description', label: 'Full description', type: 'textarea', rows: 8, maxlength: 4000, placeholder: 'What was the problem, what did you build, what was the result?', help: 'Shown when the project is opened. Leave a blank line between paragraphs.' },
+                { key: 'tech', label: 'Tech stack', placeholder: 'React, Node.js, MQTT', help: 'Comma-separated — shown as tags.' },
+                { key: 'live_url', label: 'Live URL', type: 'url', placeholder: 'https://…', help: 'Optional — adds a “Visit live” button.' },
+                { key: 'repo_url', label: 'Source code URL', type: 'url', placeholder: 'https://github.com/…', help: 'Optional — adds a “Source code” button.' }
+            ],
+            title: r => r.title,
+            subtitle: r => r.summary,
+            meta: r => [r.category, r.year, r.role].filter(Boolean).join(' · '),
+            thumb: r => r.image
+        },
         education: {
             label: 'Education',
             singular: 'education entry',
@@ -564,7 +616,22 @@
         }
     };
 
-    const SCHEMA_SQL = `-- Education table
+    const SCHEMA_SQL = `-- Works (portfolio projects) table
+CREATE TABLE IF NOT EXISTS works (
+    id INTEGER PRIMARY KEY,
+    title TEXT,
+    category TEXT,
+    year TEXT,
+    role TEXT,
+    image TEXT,
+    summary TEXT,
+    description TEXT,
+    tech TEXT,
+    live_url TEXT,
+    repo_url TEXT
+);
+
+-- Education table
 CREATE TABLE IF NOT EXISTS education (
     id INTEGER PRIMARY KEY,
     graduation_year TEXT,
@@ -603,7 +670,7 @@ CREATE TABLE IF NOT EXISTS languages (
     let SQL, db;
     let publishedBytes = null;   // the db as loaded from db/resume.db, for "discard draft"
     let source = '';             // where the current data came from
-    let currentView = 'education';
+    let currentView = 'works';
 
     const $ = (sel, root = document) => root.querySelector(sel);
     const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -780,6 +847,7 @@ CREATE TABLE IF NOT EXISTS languages (
                 <span class="count">${rows(key).length}</span>
             </button>`).join('');
         document.querySelectorAll('.nav-item[data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === currentView));
+        $('#preview-link').href = `index.html?preview=draft#${currentView === 'works' ? 'work' : 'resume'}`;
     }
 
     function go(view) {
@@ -810,7 +878,7 @@ CREATE TABLE IF NOT EXISTS languages (
         return `
         <div class="banner">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            <span class="grow">You have unpublished changes saved in this browser. Export them to update the live resume.</span>
+            <span class="grow">You have unpublished changes saved in this browser. Export them to update the live site.</span>
             <button class="btn btn-sm" data-action="discard">Discard</button>
             <button class="btn btn-sm btn-primary" data-action="go-publish">Publish</button>
         </div>`;
@@ -827,7 +895,9 @@ CREATE TABLE IF NOT EXISTS languages (
                     <span class="drag-handle" title="Drag to reorder" aria-hidden="true">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="1.6"/><circle cx="15" cy="5" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="19" r="1.6"/><circle cx="15" cy="19" r="1.6"/></svg>
                     </span>
-                    <span class="entry-num">${pad(i + 1)}</span>
+                    ${s.thumb
+                        ? `<span class="entry-thumb">${s.thumb(r) ? `<img src="${esc(s.thumb(r))}" alt="" loading="lazy">` : ICONS[table]}</span>`
+                        : `<span class="entry-num">${pad(i + 1)}</span>`}
                     <div class="entry-body" data-action="edit" data-id="${r.id}" title="Click to edit">
                         <div class="entry-title">${esc(s.title(r)) || '<span style="color:var(--text-3)">Untitled</span>'}</div>
                         ${s.subtitle && s.subtitle(r) ? `<div class="entry-sub">${esc(s.subtitle(r))}</div>` : ''}
@@ -860,7 +930,7 @@ CREATE TABLE IF NOT EXISTS languages (
             <div class="empty">
                 <div class="empty-icon">${ICONS[table]}</div>
                 <h3>No ${s.label.toLowerCase()} yet</h3>
-                <p>Add your first ${s.singular} to show it on the resume page.</p>
+                <p>Add your first ${s.singular} to show it on your site.</p>
                 <button class="btn btn-primary" data-action="add">+ Add ${s.singular}</button>
             </div>`;
 
@@ -928,7 +998,7 @@ CREATE TABLE IF NOT EXISTS languages (
             <div class="card">
                 <h2>Preview before publishing</h2>
                 <p>Open the real site with your draft data. It is visible only in this browser.</p>
-                <a class="btn" href="index.html?preview=draft#resumepage" target="_blank" rel="noopener">Open resume preview ↗</a>
+                <a class="btn" href="index.html?preview=draft#home" target="_blank" rel="noopener">Open site preview ↗</a>
             </div>
 
             <div class="card">
@@ -997,7 +1067,7 @@ CREATE TABLE IF NOT EXISTS languages (
         sql += '-- Drop existing tables if they exist\n';
         sql += Object.keys(SECTIONS).map(t => `DROP TABLE IF EXISTS ${t};`).join('\n') + '\n\n';
         sql += SCHEMA_SQL + '\n';
-        const titles = { education: 'Education', career: 'Career', skills: 'Skills', languages: 'Language Skills' };
+        const titles = { works: 'Works', education: 'Education', career: 'Career', skills: 'Skills', languages: 'Language Skills' };
         Object.keys(SECTIONS).forEach(t => {
             const data = rows(t);
             if (!data.length) return;
@@ -1059,9 +1129,37 @@ CREATE TABLE IF NOT EXISTS languages (
     function fieldHtml(f, value) {
         const id = `f-${f.key}`;
         const req = f.required ? ' <span class="req">*</span>' : '';
-        const err = `<div class="error">${f.label} is required.</div>`;
+        const err = `<div class="error">${f.type === 'url' ? 'Enter a full link starting with https://' : `${f.label} is required.`}</div>`;
         const help = f.help ? `<div class="help">${f.help}</div>` : '';
-        const chips = f.chips ? `<div class="chips">${f.chips.map(c => `<button type="button" class="chip" data-chip="${esc(c)}" data-for="${id}">${esc(c)}</button>`).join('')}</div>` : '';
+        const chipList = typeof f.chips === 'function' ? f.chips() : f.chips;
+        const chipFor = f.type === 'image' ? `${id}-text` : id;
+        const chipLabel = c => f.type === 'image' ? c.split('/').pop() : c;
+        const chips = chipList ? `<div class="chips">${chipList.map(c => `<button type="button" class="chip" data-chip="${esc(c)}" data-for="${chipFor}">${esc(chipLabel(c))}</button>`).join('')}</div>` : '';
+
+        if (f.type === 'image') {
+            const v = String(value ?? '');
+            const embedded = v.startsWith('data:');
+            return `<div class="field" data-key="${f.key}">
+                <label for="${id}-text">${f.label}${req}</label>
+                <div class="img-field">
+                    <div class="img-thumb" id="${id}-thumb"></div>
+                    <div class="img-controls">
+                        <input type="hidden" id="${id}" name="${f.key}" value="${esc(v)}">
+                        <input class="input" type="text" id="${id}-text" data-image-text="${id}" value="${embedded ? '' : esc(v)}" placeholder="${esc(embedded ? 'Uploaded image — type a path or URL to replace it' : f.placeholder || '')}" autocomplete="off">
+                        <div class="btn-row">
+                            <button type="button" class="btn btn-sm" data-upload="${id}">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                Upload image
+                            </button>
+                            <button type="button" class="btn btn-sm btn-ghost" data-clear-image="${id}">Remove</button>
+                        </div>
+                        <span class="img-size" id="${id}-size"></span>
+                        <input type="file" accept="image/*" class="hidden" id="${id}-file" data-image-file="${id}">
+                    </div>
+                </div>
+                ${chips}${help}
+            </div>`;
+        }
 
         if (f.type === 'percent') {
             const v = value ?? 50;
@@ -1077,14 +1175,14 @@ CREATE TABLE IF NOT EXISTS languages (
         }
         if (f.type === 'textarea') {
             return `<div class="field" data-key="${f.key}">
-                <label for="${id}">${f.label}${req}${f.maxlength ? `<span class="counter" data-counter="${id}"></span>` : ''}</label>
+                <label for="${id}"><span>${f.label}${req}</span>${f.maxlength ? `<span class="counter" data-counter="${id}"></span>` : ''}</label>
                 <textarea class="input" id="${id}" name="${f.key}" rows="${f.rows || 4}" placeholder="${esc(f.placeholder || '')}" ${f.maxlength ? `maxlength="${f.maxlength}"` : ''}>${esc(value ?? '')}</textarea>
                 ${chips}${help}${err}
             </div>`;
         }
         return `<div class="field" data-key="${f.key}">
             <label for="${id}">${f.label}${req}</label>
-            <input class="input" type="text" id="${id}" name="${f.key}" value="${esc(value ?? '')}" placeholder="${esc(f.placeholder || '')}" autocomplete="off">
+            <input class="input" type="${f.type === 'url' ? 'url' : 'text'}" id="${id}" name="${f.key}" value="${esc(value ?? '')}" placeholder="${esc(f.placeholder || '')}" autocomplete="off">
             ${chips}${help}${err}
         </div>`;
     }
@@ -1097,6 +1195,7 @@ CREATE TABLE IF NOT EXISTS languages (
         $('#editor-submit').textContent = id != null ? 'Save changes' : `Add ${s.singular}`;
         $('#editor-fields').innerHTML = s.fields.map(f => fieldHtml(f, row ? row[f.key] : undefined)).join('');
         editor.dataset.dirty = '';
+        s.fields.filter(f => f.type === 'image').forEach(f => updateImageField(`f-${f.key}`));
         updatePreview();
         updateCounters();
         editor.showModal();
@@ -1123,11 +1222,13 @@ CREATE TABLE IF NOT EXISTS languages (
             if (f.type === 'percent') {
                 const n = Number(el.value);
                 bad = el.value === '' || !Number.isFinite(n) || n < 0 || n > 100;
+            } else if (f.type === 'url') {
+                bad = (f.required && !el.value.trim()) || (!!el.value.trim() && !/^https?:\/\/\S+$/i.test(el.value.trim()));
             } else {
                 bad = f.required && !el.value.trim();
             }
             wrap.classList.toggle('invalid', bad);
-            if (bad && !firstBad) firstBad = el;
+            if (bad && !firstBad) firstBad = f.type === 'image' ? $(`#f-${f.key}-text`) : el;
         });
         if (firstBad) firstBad.focus();
         return !firstBad;
@@ -1148,7 +1249,16 @@ CREATE TABLE IF NOT EXISTS languages (
             ? rows(t).findIndex(r => r.id === editing.id) + 1
             : rows(t).length + 1;
         let html = '';
-        if (t === 'education') {
+        if (t === 'works') {
+            const tags = String(d.tech || '').split(',').map(x => x.trim()).filter(Boolean).slice(0, 4);
+            html = `<div class="pv-work">
+                <div class="media">${d.image ? `<img src="${esc(d.image)}" alt="">` : 'No cover image'}${d.category ? `<span class="cat">${esc(d.category)}</span>` : ''}</div>
+                ${d.year || d.role ? `<div class="meta">${esc([d.year, d.role].filter(Boolean).join(' · '))}</div>` : ''}
+                <h3>${ph(d.title, 'Project title')}</h3>
+                <p>${ph(d.summary, 'Short summary')}</p>
+                ${tags.length ? `<div class="pv-tags">${tags.map(x => `<span>${esc(x)}</span>`).join('')}</div>` : ''}
+            </div>`;
+        } else if (t === 'education') {
             html = `<div class="pv-item">
                 <div class="pv-numb"><span class="pv-bulet">${pad(index)}</span><span class="pv-date">${ph(d.graduation_year, 'Date')}</span></div>
                 <div class="pv-detail"><h3>${ph(d.institution, 'Institution')}</h3><p>${d.degree || d.description ? esc([d.degree, d.description].filter(Boolean).join(', ')) : '<span class="muted">Degree, specialization</span>'}</p></div>
@@ -1171,6 +1281,54 @@ CREATE TABLE IF NOT EXISTS languages (
         $('#editor-preview').innerHTML = html;
     }
 
+    // Thumbnail + size note for an image field (value lives in the hidden input)
+    function updateImageField(id) {
+        const value = $(`#${id}`).value;
+        $(`#${id}-thumb`).innerHTML = value ? `<img src="${esc(value)}" alt="">` : 'No image';
+        const size = $(`#${id}-size`);
+        size.textContent = value.startsWith('data:')
+            ? `Uploaded image · ${Math.round(value.length * 3 / 4 / 1024)} KB stored in the database`
+            : '';
+    }
+
+    // Resize uploads so the database (and the draft in localStorage) stays small
+    function compressImage(file, maxWidth = 1600, quality = 0.82) {
+        return new Promise((resolve, reject) => {
+            if (file.type === 'image/svg+xml') {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+                return;
+            }
+            const url = URL.createObjectURL(file);
+            const img = new Image();
+            img.onload = () => {
+                const scale = Math.min(1, maxWidth / img.naturalWidth);
+                const canvas = document.createElement('canvas');
+                canvas.width = Math.round(img.naturalWidth * scale);
+                canvas.height = Math.round(img.naturalHeight * scale);
+                canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                URL.revokeObjectURL(url);
+                let data = canvas.toDataURL('image/webp', quality);
+                if (!data.startsWith('data:image/webp')) data = canvas.toDataURL('image/jpeg', quality);
+                resolve(data);
+            };
+            img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Unsupported image')); };
+            img.src = url;
+        });
+    }
+
+    function setImageValue(id, value) {
+        $(`#${id}`).value = value;
+        const text = $(`#${id}-text`);
+        text.value = value.startsWith('data:') ? '' : value;
+        text.placeholder = value.startsWith('data:') ? 'Uploaded image — type a path or URL to replace it' : 'image/works/my-project.jpg or https://…';
+        editor.dataset.dirty = '1';
+        updateImageField(id);
+        updatePreview();
+    }
+
     async function closeEditor() {
         if (editor.dataset.dirty) {
             const ok = await confirmDialog({ title: 'Discard changes?', text: 'You have unsaved changes in this form.', ok: 'Discard' });
@@ -1190,7 +1348,8 @@ CREATE TABLE IF NOT EXISTS languages (
                 toast('Changes saved');
             } else {
                 insertRow(table, data);
-                toast(`${SECTIONS[table].label.replace(/s$/, '')} added`);
+                const one = SECTIONS[table].singular;
+                toast(`${one.charAt(0).toUpperCase() + one.slice(1)} added`);
             }
             editor.dataset.dirty = '';
             editor.close();
@@ -1322,7 +1481,7 @@ CREATE TABLE IF NOT EXISTS languages (
                 const row = getRow(table, id);
                 const ok = await confirmDialog({
                     title: `Delete this ${s.singular}?`,
-                    text: `“${s.title(row) || 'Untitled'}” will be removed from your resume.`,
+                    text: `“${s.title(row) || 'Untitled'}” will be removed from your site.`,
                     ok: 'Delete'
                 });
                 if (!ok) return;
@@ -1391,6 +1550,10 @@ CREATE TABLE IF NOT EXISTS languages (
     editor.addEventListener('click', e => {
         if (e.target.closest('[data-close]')) { closeEditor(); return; }
         if (e.target === editor) closeEditor(); // backdrop click
+        const upload = e.target.closest('[data-upload]');
+        if (upload) { $(`#${upload.dataset.upload}-file`).click(); return; }
+        const clear = e.target.closest('[data-clear-image]');
+        if (clear) { setImageValue(clear.dataset.clearImage, ''); return; }
         const chip = e.target.closest('[data-chip]');
         if (chip) {
             const input = document.getElementById(chip.dataset.for);
@@ -1402,7 +1565,12 @@ CREATE TABLE IF NOT EXISTS languages (
     editor.addEventListener('cancel', e => { e.preventDefault(); closeEditor(); });
     editor.addEventListener('input', e => {
         editor.dataset.dirty = '1';
-        if (e.target.dataset.sync) {
+        if (e.target.dataset.imageFile) return; // handled on "change"
+        if (e.target.dataset.imageText) {
+            const id = e.target.dataset.imageText;
+            $(`#${id}`).value = e.target.value.trim();
+            updateImageField(id);
+        } else if (e.target.dataset.sync) {
             document.getElementById(e.target.dataset.sync).value = e.target.value;
         } else if (e.target.type === 'number') {
             const range = editor.querySelector(`[data-sync="${e.target.id}"]`);
@@ -1411,6 +1579,22 @@ CREATE TABLE IF NOT EXISTS languages (
         e.target.closest('.field')?.classList.remove('invalid');
         updatePreview();
         updateCounters();
+    });
+    editor.addEventListener('change', async e => {
+        const id = e.target.dataset.imageFile;
+        if (!id) return;
+        const file = e.target.files[0];
+        e.target.value = '';
+        if (!file) return;
+        try {
+            const data = await compressImage(file);
+            setImageValue(id, data);
+            const kb = Math.round(data.length * 3 / 4 / 1024);
+            toast(kb > 600 ? `Image added (${kb} KB) — consider a smaller image` : `Image added (${kb} KB)`, kb > 600 ? 'err' : 'ok');
+        } catch (err) {
+            console.error(err);
+            toast('Could not read that image', 'err');
+        }
     });
     editor.addEventListener('keydown', e => {
         if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') submitEditor(e);
