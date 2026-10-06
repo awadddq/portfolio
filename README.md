@@ -6,7 +6,7 @@ This portfolio website uses a SQLite database to store and display resume data. 
 
 1. The resume data is stored in a SQLite database file (`db/resume.db`)
 2. SQL.js is loaded from a CDN to provide SQLite functionality in the browser
-3. The `resume-db.js` script loads the database file and populates the HTML with the data
+3. `javascript/resume-db.js` loads the database file and `javascript/app.js` renders it (projects, timeline, skills, languages) and runs the page routing and animations
 
 ## Updating the Database
 
@@ -25,11 +25,13 @@ Alternatively, you can manually update the database with:
 
 ## Admin Interface
 
-Open `/admin.html` (via `./start-server.sh`) to manage the resume section without touching SQL:
+Open `/admin.html` (via `./start-server.sh`) to manage the site content without touching SQL:
 
+- **Work** — add, edit and reorder portfolio projects (title, category, year, role, cover image, summary, full description, tech stack, live and source links). The first three projects are featured on the home page; categories become the filter buttons on the Work page.
+- **Cover images** — enter a path such as `image/works/my-project.jpg` (put the file in that folder), paste an image URL, or upload an image. Uploads are resized and stored inside the database.
 - Add, edit, duplicate, delete (with undo) and reorder (drag & drop) Education, Career, Skills and Languages entries
-- Live preview of each entry as it appears on the resume page
-- Changes are auto-saved as a draft in your browser; open `index.html?preview=draft#resumepage` to preview them on the real site
+- Live preview of each entry as it appears on the site
+- Changes are auto-saved as a draft in your browser; open `index.html?preview=draft` to preview them on the real site
 - **Publish & Export** downloads `resume.db` and `resume.sql` — replace the files in `db/`, then run `./deploy.sh`
 - Import an existing `.db` / `.sql` file, and an SQL console for advanced edits
 
@@ -37,6 +39,7 @@ Open `/admin.html` (via `./start-server.sh`) to manage the resume section withou
 
 The database contains the following tables:
 
+- `works`: Portfolio projects shown on the Work page
 - `education`: Educational background
 - `career`: Work experience
 - `skills`: Technical and professional skills
@@ -44,7 +47,7 @@ The database contains the following tables:
 
 ## Technologies Used
 
-- HTML/CSS/JavaScript
+- HTML/CSS/JavaScript (no frameworks — `css/site.css` and `javascript/app.js`)
 - SQLite (via SQL.js)
 - GitHub Pages for hosting
 
