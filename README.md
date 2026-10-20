@@ -10,18 +10,7 @@ This portfolio website uses a SQLite database to store and display resume data. 
 
 ## Updating the Database
 
-To update the resume data, you can:
-
-1. Edit the `db/resume.sql` file with your updated data
-2. Run the update script:
-   ```
-   ./update-db.sh
-   ```
-
-Alternatively, you can manually update the database with:
-   ```
-   cat db/resume.sql | sqlite3 db/resume.db
-   ```
+`db/resume.db` is the only data file. Edit it with the admin interface below (or any SQLite tool such as `sqlite3 db/resume.db`), then commit it.
 
 ## Admin Interface
 
@@ -32,7 +21,7 @@ Open `/admin.html` (via `./start-server.sh`) to manage the site content without 
 - Add, edit, duplicate, delete (with undo) and reorder (drag & drop) Education, Career, Skills and Languages entries
 - Live preview of each entry as it appears on the site
 - Changes are auto-saved as a draft in your browser; open `index.html?preview=draft` to preview them on the real site
-- **Publish & Export** downloads `resume.db` and `resume.sql` — replace the files in `db/`, then run `./deploy.sh`
+- **Publish & Export** downloads `resume.db` — replace `db/resume.db`, then run `./deploy.sh`
 - Import an existing `.db` / `.sql` file, and an SQL console for advanced edits
 
 ## Database Structure
@@ -76,7 +65,7 @@ To deploy this site to GitHub Pages:
 3. Follow the prompts to commit and push your changes
 4. Go to your repository settings and enable GitHub Pages if you haven't already
 
-The script will automatically update the database, commit your changes, and push them to GitHub.
+The script will commit your changes and push them to GitHub.
 
 ## License
 

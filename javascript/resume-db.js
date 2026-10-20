@@ -29,19 +29,9 @@ window.SiteData = (() => {
             return { db: new SQL.Database(draft), isDraft: true };
         }
 
-        try {
-            const response = await fetch('db/resume.db', { cache: 'no-cache' });
-            if (!response.ok) throw new Error(`Failed to fetch database: ${response.status} ${response.statusText}`);
-            return { db: new SQL.Database(new Uint8Array(await response.arrayBuffer())), isDraft: false };
-        } catch (fetchError) {
-            // Fallback to creating an in-memory database from the SQL script
-            console.warn('Error fetching database, falling back to db/resume.sql:', fetchError);
-            const sqlResponse = await fetch('db/resume.sql', { cache: 'no-cache' });
-            if (!sqlResponse.ok) throw new Error(`Failed to fetch SQL script: ${sqlResponse.status} ${sqlResponse.statusText}`);
-            const db = new SQL.Database();
-            db.run(await sqlResponse.text());
-            return { db, isDraft: false };
-        }
+        const response = await fetch('db/resume.db', { cache: 'no-cache' });
+        if (!response.ok) throw new Error(`Failed to fetch database: ${response.status} ${response.statusText}`);
+        return { db: new SQL.Database(new Uint8Array(await response.arrayBuffer())), isDraft: false };
     }
 
     // Rows as plain objects; a missing table (e.g. an older database) reads as empty
