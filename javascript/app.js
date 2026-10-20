@@ -25,9 +25,9 @@ Description   : Routing, rendering of the database content and all page animatio
     const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const finePointer = matchMedia('(hover: hover) and (pointer: fine)').matches;
 
-    const ROUTES = { home: 'Home', work: 'Work', resume: 'Resume', blog: 'Blog' };
+    const ROUTES = { home: 'Home', work: 'Work', resume: 'Resume' };
     // Old section hashes keep working
-    const LEGACY = { herosection: 'home', productspage: 'work', resumepage: 'resume', blogpage: 'blog' };
+    const LEGACY = { herosection: 'home', productspage: 'work', resumepage: 'resume' };
     const EASE_IO = 'cubic-bezier(.76, 0, .24, 1)';
     const EASE_OUT = 'cubic-bezier(.16, 1, .3, 1)';
 
@@ -741,6 +741,57 @@ Description   : Routing, rendering of the database content and all page animatio
     }
 
     // =====================================================================
+    // Share dialog (QR code, link and contact card)
+    // =====================================================================
+    const SITE_URL = 'https://awadddq.github.io/portfolio/';
+    const shareDialog = $('#share');
+    const copyBtn = $('[data-copy-link]', shareDialog);
+    const nativeShareBtn = $('[data-native-share]', shareDialog);
+    let shareTimer, copyTimer;
+
+    function openShare() {
+        setMenu(false);
+        clearTimeout(shareTimer);
+        if (!shareDialog.open) shareDialog.showModal();
+        document.documentElement.classList.add('no-scroll');
+        $('.cursor')?.classList.remove('is-view', 'is-link');
+        requestAnimationFrame(() => requestAnimationFrame(() => shareDialog.classList.add('is-open')));
+    }
+
+    function closeShare() {
+        if (!shareDialog.classList.contains('is-open')) return;
+        shareDialog.classList.remove('is-open');
+        document.documentElement.classList.toggle('no-scroll', menuOpen || project.isOpen);
+        shareTimer = setTimeout(() => shareDialog.close(), reduceMotion ? 0 : 600);
+    }
+
+    shareDialog.addEventListener('cancel', e => { e.preventDefault(); closeShare(); });
+    shareDialog.addEventListener('close', () => {
+        if (!shareDialog.classList.contains('is-open')) return;
+        shareDialog.classList.remove('is-open');
+        document.documentElement.classList.toggle('no-scroll', menuOpen || project.isOpen);
+    });
+
+    copyBtn.addEventListener('click', async () => {
+        try {
+            await navigator.clipboard.writeText(SITE_URL);
+            copyBtn.textContent = 'Copied';
+            copyBtn.classList.add('is-done');
+        } catch {
+            copyBtn.textContent = 'Failed';
+        }
+        clearTimeout(copyTimer);
+        copyTimer = setTimeout(() => { copyBtn.textContent = 'Copy'; copyBtn.classList.remove('is-done'); }, 1800);
+    });
+
+    if (navigator.share) {
+        nativeShareBtn.hidden = false;
+        nativeShareBtn.addEventListener('click', () => {
+            navigator.share({ title: 'Awad Alqarni — Portfolio', url: SITE_URL }).catch(() => {}); // dismissed
+        });
+    }
+
+    // =====================================================================
     // Events
     // =====================================================================
     document.addEventListener('click', e => {
@@ -773,6 +824,8 @@ Description   : Routing, rendering of the database content and all page animatio
             return;
         }
 
+        if (e.target.closest('[data-share]')) { openShare(); return; }
+        if (e.target.closest('#share [data-close]')) { closeShare(); return; }
         if (e.target.closest('#project [data-close]')) { closeProject(); return; }
         const goto = e.target.closest('[data-goto]');
         if (goto) { switchProject(goto.dataset.goto); return; }

@@ -230,6 +230,13 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 }
 .pill.is-ready { opacity: 1; }
 .header-actions { display: flex; align-items: center; gap: 10px; }
+.icon-btn {
+    width: 46px; height: 46px; flex-shrink: 0; border-radius: 50%; display: grid; place-items: center;
+    border: 1px solid var(--line-2); background: rgba(255, 255, 255, .04);
+    transition: border-color .3s, background .3s, color .3s;
+}
+.icon-btn:hover { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+@media (max-width: 380px) { .header-cta { display: none; } }
 
 .menu-toggle {
     position: relative; width: 46px; height: 46px; border-radius: 50%;
@@ -482,7 +489,7 @@ a.info-card:hover { border-color: rgba(255, 94, 21, .45); background: var(--acce
 .marquee { overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
 .marquee-track { display: flex; width: max-content; animation: marquee var(--dur, 40s) linear infinite; }
 .marquee.reverse .marquee-track { animation-direction: reverse; }
-.marquee:hover .marquee-track { animation-play-state: paused; }
+.marquee:not(.logos):hover .marquee-track { animation-play-state: paused; }
 .marquee-group { display: flex; align-items: center; flex-shrink: 0; }
 @keyframes marquee { to { transform: translateX(-50%); } }
 
@@ -558,13 +565,13 @@ a.info-card:hover { border-color: rgba(255, 94, 21, .45); background: var(--acce
 /* =====================================================================
    Project dialog
    ===================================================================== */
-.project {
+.project, .share {
     position: fixed; inset: 0; width: 100%; height: 100%; max-width: none; max-height: none;
     margin: 0; padding: 0; border: 0; background: transparent; color: var(--text); overflow: hidden;
 }
-.project::backdrop { background: transparent; }
+.project::backdrop, .share::backdrop { background: transparent; }
 .project-backdrop { position: absolute; inset: 0; background: rgba(5, 5, 7, .72); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); opacity: 0; transition: opacity .5s; }
-.project.is-open .project-backdrop { opacity: 1; }
+.project.is-open .project-backdrop, .share.is-open .project-backdrop { opacity: 1; }
 .project-sheet {
     position: absolute; left: 0; right: 0; bottom: 0; top: max(4vh, calc(env(safe-area-inset-top) + 12px));
     display: flex; flex-direction: column;
@@ -619,6 +626,39 @@ a.info-card:hover { border-color: rgba(255, 94, 21, .45); background: var(--acce
     .project-grab { display: none; }
     .project-cols { grid-template-columns: 1fr 300px; gap: 56px; }
     .project-content { margin-top: -60px; }
+}
+
+/* =====================================================================
+   Share dialog
+   ===================================================================== */
+.share-card {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    display: grid; justify-items: center; gap: 18px; text-align: center;
+    max-height: calc(100% - env(safe-area-inset-top) - 12px); overflow-y: auto; overscroll-behavior: contain;
+    padding: 36px var(--gutter) calc(28px + env(safe-area-inset-bottom));
+    background: var(--bg-2); border: 1px solid var(--line-2); border-bottom: 0;
+    border-radius: 26px 26px 0 0;
+    transform: translateY(100%); transition: transform .6s var(--ease);
+    box-shadow: 0 -30px 80px -20px rgba(0, 0, 0, .8);
+}
+.share.is-open .share-card { transform: none; }
+.share-card h2 { font-size: clamp(1.5rem, 5vw, 1.9rem); letter-spacing: -.03em; max-width: 16ch; }
+.share-qr { width: min(220px, 60vw); padding: 16px; border-radius: 20px; background: #fff; box-shadow: 0 20px 50px -20px rgba(255, 94, 21, .45); }
+.share-qr img { width: 100%; height: auto; }
+.share-url {
+    display: flex; align-items: center; gap: 10px; width: 100%; max-width: 340px;
+    padding: 6px 6px 6px 18px; border-radius: 999px; background: rgba(255, 255, 255, .04); border: 1px solid var(--line);
+    font-size: 14px; color: var(--text-2);
+}
+.share-url span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: left; }
+.share-url button { padding: 8px 16px; border-radius: 999px; background: rgba(255, 255, 255, .08); font-size: 13px; font-weight: 600; transition: background .3s, color .3s; }
+.share-url button:hover, .share-url button.is-done { background: var(--accent); color: #fff; }
+.share-actions { display: grid; gap: 10px; width: 100%; max-width: 340px; }
+.share-note { font-size: 13px; color: var(--text-3); }
+
+@media (min-width: 880px) {
+    .share-card { left: 50%; right: auto; top: 50%; bottom: auto; width: 420px; max-height: 90vh; padding: 40px 36px 32px; border-radius: 28px; border-bottom: 1px solid var(--line-2); transform: translate(-50%, calc(-50% + 40px)) scale(.96); opacity: 0; transition: transform .6s var(--ease), opacity .4s; }
+    .share.is-open .share-card { transform: translate(-50%, -50%); opacity: 1; }
 }
 
 /* =====================================================================
@@ -713,24 +753,6 @@ a.info-card:hover { border-color: rgba(255, 94, 21, .45); background: var(--acce
 .logo-item { flex-shrink: 0; height: 96px; padding: 0 clamp(28px, 5vw, 56px); display: grid; place-items: center; }
 .logo-item img { height: clamp(34px, 6vw, 48px); width: auto; max-width: 220px; object-fit: contain; filter: brightness(0) invert(1); opacity: .55; transition: filter .5s, opacity .5s; }
 .logo-item:hover img { filter: none; opacity: 1; }
-
-/* =====================================================================
-   Blog
-   ===================================================================== */
-.blog-empty {
-    position: relative; display: grid; gap: 20px; justify-items: start; overflow: hidden;
-    padding: clamp(28px, 6vw, 64px); border-radius: var(--radius); background: var(--card); border: 1px solid var(--line);
-}
-.blog-empty h2 { font-size: clamp(1.8rem, 5vw, 2.8rem); max-width: 640px; }
-.blog-empty p { color: var(--text-2); max-width: 560px; }
-.typing { display: grid; gap: 10px; width: min(100%, 420px); margin-block: 8px; }
-.typing span { height: 10px; border-radius: 10px; background: rgba(255, 255, 255, .07); transform-origin: left; animation: type 3.6s var(--ease) infinite; }
-.typing span:nth-child(2) { width: 82%; animation-delay: .25s; }
-.typing span:nth-child(3) { width: 64%; animation-delay: .5s; }
-.typing span:nth-child(4) { width: 40%; animation-delay: .75s; background: var(--grad); opacity: .7; }
-@keyframes type { 0% { transform: scaleX(0); } 45%, 80% { transform: scaleX(1); } 100% { transform: scaleX(1); opacity: 0; } }
-.topics { display: flex; flex-wrap: wrap; gap: 8px; }
-.blog-empty .kanji { position: absolute; right: clamp(-20px, -2vw, 0px); top: 50%; transform: translateY(-50%); font-family: var(--font-jp); font-weight: 700; font-size: clamp(8rem, 24vw, 16rem); color: rgba(255, 255, 255, .03); pointer-events: none; line-height: 1; }
 
 /* =====================================================================
    Footer

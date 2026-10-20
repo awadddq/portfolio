@@ -78,9 +78,12 @@
                 <a href="#home" data-route="home">Home</a>
                 <a href="#work" data-route="work">Work</a>
                 <a href="#resume" data-route="resume">Resume</a>
-                <a href="#blog" data-route="blog">Blog</a>
             </nav>
             <div class="header-actions">
+                <button class="icon-btn" type="button" data-share aria-haspopup="dialog" aria-controls="share">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5"/></svg>
+                    <span class="sr-only">Share</span>
+                </button>
                 <a class="btn btn-sm btn-primary header-cta" href="mailto:awadddq@gmail.com" data-magnetic>Let's talk</a>
                 <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu">
                     <span></span><span></span>
@@ -96,7 +99,6 @@
             <li><a href="#home" data-route="home" style="--i:0">Home <small>01</small></a></li>
             <li><a href="#work" data-route="work" style="--i:1">Work <small>02</small></a></li>
             <li><a href="#resume" data-route="resume" style="--i:2">Resume <small>03</small></a></li>
-            <li><a href="#blog" data-route="blog" style="--i:3">Blog <small>04</small></a></li>
         </ol>
         <div class="mobile-foot">
             <a href="mailto:awadddq@gmail.com">awadddq@gmail.com</a>
@@ -172,26 +174,7 @@
                     <div class="stat"><div class="stat-num"><span data-count="0" id="stat-works">0</span></div><p class="stat-label">Projects in this portfolio</p></div>
                 </div>
             </div>
-
-            <div class="band" aria-hidden="true">
-                <div class="marquee" style="--dur:38s">
-                    <div class="marquee-track">
-                        <span class="band-item">Full-stack development <span class="star">✦</span></span>
-                        <span class="band-item">UI/UX design <span class="star">✦</span></span>
-                        <span class="band-item">IoT systems <span class="star">✦</span></span>
-                        <span class="band-item">Cloud &amp; DevOps <span class="star">✦</span></span>
-                    </div>
-                </div>
-                <div class="marquee outline reverse" style="--dur:44s">
-                    <div class="marquee-track">
-                        <span class="band-item">Embedded firmware <span class="star">✦</span></span>
-                        <span class="band-item">Data analytics <span class="star">✦</span></span>
-                        <span class="band-item"><span class="jp">日本語</span> <span class="star">✦</span></span>
-                        <span class="band-item">Renewable energy <span class="star">✦</span></span>
-                    </div>
-                </div>
-            </div>
-
+            
             <div class="container">
                 <div class="section-head">
                     <div>
@@ -306,32 +289,6 @@
                 </div>
             </div>
         </section>
-
-        <!-- ============================== BLOG ============================== -->
-        <section class="view" id="view-blog" data-view="blog" data-title="Blog — Awad Alqarni" hidden>
-            <div class="container page-head">
-                <p class="eyebrow" data-reveal>Blog</p>
-                <h1 class="page-title" data-reveal="split">Notes &amp; writing</h1>
-                <p class="page-lead" data-reveal style="--d:3">Thoughts on engineering, design, IoT and life between Riyadh and Tokyo.</p>
-            </div>
-            <div class="container">
-                <div class="blog-empty" data-reveal>
-                    <span class="kanji" aria-hidden="true">書</span>
-                    <p class="eyebrow">Coming soon</p>
-                    <h2>The first articles are being written.</h2>
-                    <div class="typing" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
-                    <p>Expect deep-dives on building IoT platforms, notes on UI/UX craft and stories from five years in Japan.</p>
-                    <div class="topics">
-                        <span class="tag">IoT &amp; embedded</span>
-                        <span class="tag">Full-stack</span>
-                        <span class="tag">UI/UX</span>
-                        <span class="tag">Japan</span>
-                        <span class="tag">Renewable energy</span>
-                    </div>
-                    <a class="btn btn-primary" href="mailto:awadddq@gmail.com?subject=Blog%20topic%20suggestion" data-magnetic>Suggest a topic <span class="arrow">→</span></a>
-                </div>
-            </div>
-        </section>
     </main>
 
     <!-- FOOTER -->
@@ -353,7 +310,6 @@
                         <li><a href="#home">Home</a></li>
                         <li><a href="#work">Work</a></li>
                         <li><a href="#resume">Resume</a></li>
-                        <li><a href="#blog">Blog</a></li>
                     </ul>
                 </div>
                 <div class="footer-col">
@@ -390,6 +346,31 @@
                 <figure class="project-cover"><img id="project-img" src="data:," alt="" /></figure>
                 <div class="project-content" id="project-content"></div>
             </div>
+        </div>
+    </dialog>
+
+    <!-- SHARE -->
+    <dialog class="share" id="share" aria-labelledby="share-title">
+        <div class="project-backdrop" data-close></div>
+        <div class="share-card">
+            <button class="project-close" type="button" data-close aria-label="Close">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+            <p class="eyebrow">Share</p>
+            <h2 id="share-title">Scan to open my portfolio</h2>
+            <div class="share-qr"><img src="image/asset/qr.svg" width="33" height="33" alt="QR code linking to awadddq.github.io/portfolio" /></div>
+            <div class="share-url">
+                <span>awadddq.github.io/portfolio</span>
+                <button type="button" data-copy-link>Copy</button>
+            </div>
+            <div class="share-actions">
+                <a class="btn btn-primary" href="contact.vcf">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+                    Save contact
+                </a>
+                <button class="btn" type="button" data-native-share hidden>Share link</button>
+            </div>
+            <p class="share-note">Adds me to Contacts on iPhone and Android.</p>
         </div>
     </dialog>
 
