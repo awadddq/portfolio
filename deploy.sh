@@ -12,10 +12,6 @@ if ! git rev-parse --is-inside-work-tree &>/dev/null; then
     exit 1
 fi
 
-# Update the database
-echo "Updating the database..."
-./update-db.sh
-
 # Add all files to git
 echo "Adding files to Git..."
 git add .
